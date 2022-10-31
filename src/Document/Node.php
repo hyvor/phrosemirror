@@ -2,6 +2,7 @@
 namespace Hyvor\Phrosemirror\Document;
 
 use Hyvor\Phrosemirror\Exception\InvalidJsonException;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\TextNodeType;
 use Hyvor\Phrosemirror\Types\AttrsType;
 use Hyvor\Phrosemirror\Types\MarkType;
 use Hyvor\Phrosemirror\Types\NodeType;
@@ -86,15 +87,42 @@ class Node
             if ($types === null || $node->isOfType($types))
                 $nodes[] = $node;
 
+            if ($nested) {
+                $nodes = [...$nodes, ...$node->getNodes($types)];
+            }
+
         }
 
         return $nodes;
 
     }
 
-    public function getMarks()
+    /**
+     * @param class-string<MarkType>|class-string<MarkType>[]|null $types
+     * @param bool $nested
+     * @return array<Mark>
+     */
+    public function getMarks(string|array|null $types = null, bool $nested = true) : array
     {
 
+        $types = is_string($types) ? [$types] : $types;
+
+        $marks = [];
+
+        // get current element's marks
+        foreach ($this->marks as $mark) {
+            if ($types === null || $mark->isOfType($types))
+                $marks[] = $mark;
+        }
+
+        // get children's marks
+        if ($nested) {
+            foreach ($this->content as $child) {
+                $marks = [...$marks, ...$child->getMarks($types)];
+            }
+        }
+
+        return $marks;
 
     }
 

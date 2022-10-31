@@ -1,4 +1,4 @@
-Phrosemirror is a library to manipulate Prosemirror (or TipTap) JSON content in PHP in a type-safe and easy way.
+Phrosemirror is a library to work with Prosemirror (or TipTap) JSON content in PHP in an easy and type-safe way.
 
 Here is what this library can do:
 
@@ -15,7 +15,7 @@ Not yet possible, but coming soon:
 ## Installation
 
 ```
-composer require hyvor/prosemirror
+composer require hyvor/phrosemirror
 ```
 
 ## 1. Schema
