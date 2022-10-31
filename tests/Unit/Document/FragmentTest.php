@@ -1,11 +1,11 @@
 <?php
 
-namespace Hyvor\Prosemirror\Test\Unit\Document;
+namespace Hyvor\Phrosemirror\Test\Unit\Document;
 
-use Hyvor\Prosemirror\Document\Fragment;
-use Hyvor\Prosemirror\Document\Node;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\BlockquoteNodeType;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\ParagraphNodeType;
+use Hyvor\Phrosemirror\Document\Fragment;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\BlockquoteNodeType;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\ParagraphNodeType;
 
 test('methods', function() {
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyvor\Prosemirror\Document;
+namespace Hyvor\Phrosemirror\Document;
 
-use Hyvor\Prosemirror\Types\AttrsType;
-use Hyvor\Prosemirror\Types\NodeType;
+use Hyvor\Phrosemirror\Types\AttrsType;
+use Hyvor\Phrosemirror\Types\NodeType;
 
 /**
  * @extends Node<NodeType>

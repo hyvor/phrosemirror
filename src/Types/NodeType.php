@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyvor\Prosemirror\Types;
+namespace Hyvor\Phrosemirror\Types;
 
-use Hyvor\Prosemirror\Document\Node;
+use Hyvor\Phrosemirror\Document\Node;
 
 
 abstract class NodeType
@@ -16,7 +16,7 @@ abstract class NodeType
     public string $attrs = AttrsType::class;
 
     /**
-     * @param \Hyvor\Prosemirror\Document\Node<self> $node
+     * @param \Hyvor\Phrosemirror\Document\Node<self> $node
      * @param string $children
      * @return string
      */

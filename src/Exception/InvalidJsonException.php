@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyvor\Prosemirror\Exception;
+namespace Hyvor\Phrosemirror\Exception;
 
-class InvalidJsonException extends ProsemirrorException
+class InvalidJsonException extends PhrosemirrorException
 {}

@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyvor\Prosemirror\Test\Unit\Html\HtmlSerializer;
+namespace Hyvor\Phrosemirror\Test\Unit\Html\HtmlSerializer;
 
-use Hyvor\Prosemirror\Document\Document;
+use Hyvor\Phrosemirror\Document\Document;
 
 it('xss in text', function() {
 

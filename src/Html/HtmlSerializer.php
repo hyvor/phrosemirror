@@ -1,9 +1,9 @@
 <?php
-namespace Hyvor\Prosemirror\Html;
+namespace Hyvor\Phrosemirror\Html;
 
-use Hyvor\Prosemirror\Document\Mark;
-use Hyvor\Prosemirror\Document\Node;
-use Hyvor\Prosemirror\Document\TextNode;
+use Hyvor\Phrosemirror\Document\Mark;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Document\TextNode;
 
 
 class HtmlSerializer

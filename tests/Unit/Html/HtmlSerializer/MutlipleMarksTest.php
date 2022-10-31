@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyvor\Prosemirror\Test\Unit\Html\HtmlSerializer;
+namespace Hyvor\Phrosemirror\Test\Unit\Html\HtmlSerializer;
 
 // test from tiptap-php
-use Hyvor\Prosemirror\Document\Document;
+use Hyvor\Phrosemirror\Document\Document;
 
 test('multiple marks get rendered correctly', function () {
     $document = [

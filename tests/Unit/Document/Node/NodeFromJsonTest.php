@@ -1,10 +1,10 @@
 <?php
 
-namespace Hyvor\Prosemirror\Test\Unit\Document;
+namespace Hyvor\Phrosemirror\Test\Unit\Document;
 
-use Hyvor\Prosemirror\Document\Node;
-use Hyvor\Prosemirror\Exception\InvalidJsonException;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\ParagraphNodeType;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Exception\InvalidJsonException;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\ParagraphNodeType;
 
 it('creates a node', function() {
 

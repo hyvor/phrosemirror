@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyvor\Prosemirror\Test\TestTypes\Nodes;
+namespace Hyvor\Phrosemirror\Test\TestTypes\Nodes;
 
-use Hyvor\Prosemirror\Types\AttrsType;
+use Hyvor\Phrosemirror\Types\AttrsType;
 
 class HeadingNodeAttrs extends AttrsType
 {

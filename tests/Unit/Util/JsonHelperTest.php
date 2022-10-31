@@ -1,8 +1,8 @@
 <?php
 
 
-use Hyvor\Prosemirror\Exception\InvalidJsonException;
-use Hyvor\Prosemirror\Util\JsonHelper;
+use Hyvor\Phrosemirror\Exception\InvalidJsonException;
+use Hyvor\Phrosemirror\Util\JsonHelper;
 
 it('returns an array correctly from array, object, and string', function() {
 

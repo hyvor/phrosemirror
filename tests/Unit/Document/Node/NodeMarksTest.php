@@ -1,10 +1,10 @@
 <?php
 
-namespace Hyvor\Prosemirror\Test\Unit\Document\Node;
+namespace Hyvor\Phrosemirror\Test\Unit\Document\Node;
 
-use Hyvor\Prosemirror\Document\Node;
-use Hyvor\Prosemirror\Test\TestTypes\Marks\CodeMarkType;
-use Hyvor\Prosemirror\Test\TestTypes\Marks\StrongMarkType;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Test\TestTypes\Marks\CodeMarkType;
+use Hyvor\Phrosemirror\Test\TestTypes\Marks\StrongMarkType;
 
 test('has mark', function() {
 

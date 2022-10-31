@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyvor\Prosemirror\Types;
+namespace Hyvor\Phrosemirror\Types;
 
-use Hyvor\Prosemirror\Document\Mark;
+use Hyvor\Phrosemirror\Document\Mark;
 
 abstract class MarkType
 {

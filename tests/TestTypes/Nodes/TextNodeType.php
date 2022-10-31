@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyvor\Prosemirror\Test\TestTypes\Nodes;
+namespace Hyvor\Phrosemirror\Test\TestTypes\Nodes;
 
-use Hyvor\Prosemirror\Types\NodeType;
+use Hyvor\Phrosemirror\Types\NodeType;
 
 class TextNodeType extends NodeType
 {

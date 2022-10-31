@@ -1,12 +1,12 @@
 <?php
 
-namespace Hyvor\Prosemirror\Test\Unit\Document\Node;
+namespace Hyvor\Phrosemirror\Test\Unit\Document\Node;
 
-use Hyvor\Prosemirror\Document\Node;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\BlockquoteNodeType;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\DocNodeType;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\ParagraphNodeType;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\TextNodeType;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\BlockquoteNodeType;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\DocNodeType;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\ParagraphNodeType;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\TextNodeType;
 
 it('traverse through nodes', function() {
 

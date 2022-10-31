@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyvor\Prosemirror\Util;
+namespace Hyvor\Phrosemirror\Util;
 
-use Hyvor\Prosemirror\Exception\InvalidJsonException;
+use Hyvor\Phrosemirror\Exception\InvalidJsonException;
 
 class JsonHelper
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyvor\Prosemirror\Types;
+namespace Hyvor\Phrosemirror\Types;
 
 class Schema
 {

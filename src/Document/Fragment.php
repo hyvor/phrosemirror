@@ -1,13 +1,16 @@
 <?php
 
-namespace Hyvor\Prosemirror\Document;
+namespace Hyvor\Phrosemirror\Document;
 
 use ArrayIterator;
-use Hyvor\Prosemirror\Types\Schema;
-use Hyvor\Prosemirror\Util\JsonHelper;
+use Hyvor\Phrosemirror\Types\Schema;
+use Hyvor\Phrosemirror\Util\JsonHelper;
 use IteratorAggregate;
 use Traversable;
 
+/**
+ * @implements IteratorAggregate<int, Node>
+ */
 class Fragment implements IteratorAggregate
 {
 

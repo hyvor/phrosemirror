@@ -1,10 +1,10 @@
 <?php
 
-namespace Hyvor\Prosemirror\Document;
+namespace Hyvor\Phrosemirror\Document;
 
-use Hyvor\Prosemirror\Exception\InvalidJsonException;
-use Hyvor\Prosemirror\Types\Schema;
-use Hyvor\Prosemirror\Util\JsonHelper;
+use Hyvor\Phrosemirror\Exception\InvalidJsonException;
+use Hyvor\Phrosemirror\Types\Schema;
+use Hyvor\Phrosemirror\Util\JsonHelper;
 
 
 // just a wrapper around Node for better DX

@@ -1,12 +1,12 @@
 <?php
-namespace Hyvor\Prosemirror\Document;
+namespace Hyvor\Phrosemirror\Document;
 
-use Hyvor\Prosemirror\Exception\InvalidJsonException;
-use Hyvor\Prosemirror\Types\AttrsType;
-use Hyvor\Prosemirror\Types\MarkType;
-use Hyvor\Prosemirror\Types\NodeType;
-use Hyvor\Prosemirror\Types\Schema;
-use Hyvor\Prosemirror\Util\JsonHelper;
+use Hyvor\Phrosemirror\Exception\InvalidJsonException;
+use Hyvor\Phrosemirror\Types\AttrsType;
+use Hyvor\Phrosemirror\Types\MarkType;
+use Hyvor\Phrosemirror\Types\NodeType;
+use Hyvor\Phrosemirror\Types\Schema;
+use Hyvor\Phrosemirror\Util\JsonHelper;
 
 
 class Node

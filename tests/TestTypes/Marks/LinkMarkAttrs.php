@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyvor\Prosemirror\Test\TestTypes\Marks;
+namespace Hyvor\Phrosemirror\Test\TestTypes\Marks;
 
-use Hyvor\Prosemirror\Types\AttrsType;
+use Hyvor\Phrosemirror\Types\AttrsType;
 
 class LinkMarkAttrs extends AttrsType
 {

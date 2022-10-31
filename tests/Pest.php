@@ -1,18 +1,18 @@
 <?php
 
-use Hyvor\Prosemirror\Test\TestTypes\Marks\CodeMarkType;
-use Hyvor\Prosemirror\Test\TestTypes\Marks\LinkMarkType;
-use Hyvor\Prosemirror\Test\TestTypes\Marks\StrongMarkType;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\BlockquoteNodeType;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\CodeBlock;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\DocNodeType;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\HeadingNodeType;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\ImageNodeType;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\ParagraphNodeType;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\TextNodeType;
-use Hyvor\Prosemirror\Types\MarkType;
-use Hyvor\Prosemirror\Types\NodeType;
-use Hyvor\Prosemirror\Types\Schema;
+use Hyvor\Phrosemirror\Test\TestTypes\Marks\CodeMarkType;
+use Hyvor\Phrosemirror\Test\TestTypes\Marks\LinkMarkType;
+use Hyvor\Phrosemirror\Test\TestTypes\Marks\StrongMarkType;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\BlockquoteNodeType;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\CodeBlock;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\DocNodeType;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\HeadingNodeType;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\ImageNodeType;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\ParagraphNodeType;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\TextNodeType;
+use Hyvor\Phrosemirror\Types\MarkType;
+use Hyvor\Phrosemirror\Types\NodeType;
+use Hyvor\Phrosemirror\Types\Schema;
 
 /**
  * @param NodeType[] $nodes

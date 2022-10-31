@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyvor\Prosemirror\Types;
+namespace Hyvor\Phrosemirror\Types;
 
-use Hyvor\Prosemirror\Exception\InvalidAttributeTypeException;
+use Hyvor\Phrosemirror\Exception\InvalidAttributeTypeException;
 use ReflectionClass;
 use TypeError;
 
@@ -13,13 +13,13 @@ class AttrsType
      * @param string $name
      * @return scalar
      */
-    public function get(string $name)
+    public function get(string $name, bool $escape = true)
     {
 
         $attr = $this->$name ?? null;
         
         // escape the Attribute
-        if (is_string($attr)) {
+        if (is_string($attr) && $escape) {
             $attr = htmlspecialchars($attr);
         }
         

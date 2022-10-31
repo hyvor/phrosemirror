@@ -1,14 +1,14 @@
 <?php
 
-namespace Hyvor\Prosemirror\Test\Unit;
+namespace Hyvor\Phrosemirror\Test\Unit;
 
-use Hyvor\Prosemirror\Document\Document;
-use Hyvor\Prosemirror\Document\Fragment;
-use Hyvor\Prosemirror\Document\Node;
-use Hyvor\Prosemirror\Document\TextNode;
-use Hyvor\Prosemirror\Exception\InvalidJsonException;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\DocNodeType;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\ParagraphNodeType;
+use Hyvor\Phrosemirror\Document\Document;
+use Hyvor\Phrosemirror\Document\Fragment;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Document\TextNode;
+use Hyvor\Phrosemirror\Exception\InvalidJsonException;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\DocNodeType;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\ParagraphNodeType;
 
 it('creates a basic document', function() {
 

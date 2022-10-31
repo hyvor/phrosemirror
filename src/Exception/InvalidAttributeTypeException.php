@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyvor\Prosemirror\Exception;
+namespace Hyvor\Phrosemirror\Exception;
 
-class InvalidAttributeTypeException extends ProsemirrorException
+class InvalidAttributeTypeException extends PhrosemirrorException
 {}

@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyvor\Prosemirror\Test\TestTypes\Marks;
+namespace Hyvor\Phrosemirror\Test\TestTypes\Marks;
 
-use Hyvor\Prosemirror\Document\Mark;
-use Hyvor\Prosemirror\Types\MarkType;
+use Hyvor\Phrosemirror\Document\Mark;
+use Hyvor\Phrosemirror\Types\MarkType;
 
 class StrongMarkType extends MarkType
 {

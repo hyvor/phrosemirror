@@ -1,12 +1,12 @@
 <?php
 
-namespace Hyvor\Prosemirror\Test\Unit\Document;
+namespace Hyvor\Phrosemirror\Test\Unit\Document;
 
-use Hyvor\Prosemirror\Document\Mark;
-use Hyvor\Prosemirror\Document\Node;
-use Hyvor\Prosemirror\Exception\InvalidJsonException;
-use Hyvor\Prosemirror\Test\TestTypes\Marks\LinkMarkType;
-use Hyvor\Prosemirror\Test\TestTypes\Marks\StrongMarkType;
+use Hyvor\Phrosemirror\Document\Mark;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Exception\InvalidJsonException;
+use Hyvor\Phrosemirror\Test\TestTypes\Marks\LinkMarkType;
+use Hyvor\Phrosemirror\Test\TestTypes\Marks\StrongMarkType;
 
 it('gets marks from JSON', function() {
 

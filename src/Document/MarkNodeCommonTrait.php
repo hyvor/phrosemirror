@@ -1,10 +1,10 @@
 <?php
 
-namespace Hyvor\Prosemirror\Document;
+namespace Hyvor\Phrosemirror\Document;
 
-use Hyvor\Prosemirror\Html\HtmlSerializer;
-use Hyvor\Prosemirror\Types\MarkType;
-use Hyvor\Prosemirror\Types\NodeType;
+use Hyvor\Phrosemirror\Html\HtmlSerializer;
+use Hyvor\Phrosemirror\Types\MarkType;
+use Hyvor\Phrosemirror\Types\NodeType;
 
 trait MarkNodeCommonTrait
 {
@@ -26,9 +26,9 @@ trait MarkNodeCommonTrait
      * @param string $name
      * @return mixed
      */
-    public function attr(string $name)
+    public function attr(string $name, bool $escape = true)
     {
-        return $this->attrs->get($name);
+        return $this->attrs->get($name, $escape);
     }
 
     public function toHtml() : string

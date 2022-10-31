@@ -1,14 +1,14 @@
 <?php
 
-namespace Hyvor\Prosemirror\Test\Unit\Document;
+namespace Hyvor\Phrosemirror\Test\Unit\Document;
 
-use Hyvor\Prosemirror\Document\Document;
-use Hyvor\Prosemirror\Document\Node;
-use Hyvor\Prosemirror\Exception\InvalidAttributeTypeException;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\ImageNodeAttrs;
-use Hyvor\Prosemirror\Test\TestTypes\Nodes\ImageNodeType;
-use Hyvor\Prosemirror\Types\AttrsType;
-use Hyvor\Prosemirror\Types\NodeType;
+use Hyvor\Phrosemirror\Document\Document;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Exception\InvalidAttributeTypeException;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\ImageNodeAttrs;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\ImageNodeType;
+use Hyvor\Phrosemirror\Types\AttrsType;
+use Hyvor\Phrosemirror\Types\NodeType;
 
 it('adds attributes', function() {
 

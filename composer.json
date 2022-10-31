@@ -1,16 +1,16 @@
 {
-    "name": "hyvor/prosemirror",
-    "description": "Prosemirror Content Parser in PHP",
+    "name": "hyvor/phrosemirror",
+    "description": "Prosemirror in PHP",
     "type": "library",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Hyvor\\Prosemirror\\": "src/"
+            "Hyvor\\Phrosemirror\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Hyvor\\Prosemirror\\Test\\": "tests/"
+            "Hyvor\\Phrosemirror\\Test\\": "tests/"
         }
     },
     "authors": [
