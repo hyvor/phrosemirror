@@ -1,6 +1,7 @@
 <?php
 namespace Hyvor\Phrosemirror\Document;
 
+use Hyvor\Phrosemirror\Converters\TextSerializer;
 use Hyvor\Phrosemirror\Exception\InvalidJsonException;
 use Hyvor\Phrosemirror\Test\TestTypes\Nodes\TextNodeType;
 use Hyvor\Phrosemirror\Types\AttrsType;
@@ -30,6 +31,13 @@ class Node
         public array $marks
 
     ) {}
+
+
+    public function toText() : string
+    {
+        $serializer = new TextSerializer;
+        return $serializer->serialize($this);
+    }
 
 
     /**
@@ -147,7 +155,7 @@ class Node
 
 
     /**
-     * @param InputJsonType $json
+     * @param mixed $json
      * @return self
      */
     public static function fromJson(Schema $schema, $json) : self
@@ -157,6 +165,10 @@ class Node
 
         if (!isset($json['type'])) {
             throw new InvalidJsonException('Node type is not set in JSON');
+        }
+
+        if (!is_string($json['type'])) {
+            throw new InvalidJsonException('Node type should be a string in JSON');
         }
 
         $typeName = $json['type'];

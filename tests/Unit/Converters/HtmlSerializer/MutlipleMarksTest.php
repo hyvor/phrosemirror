@@ -22,6 +22,9 @@ test('multiple marks get rendered correctly', function () {
                             [
                                 'type' => 'code',
                             ],
+                            [
+                                'type' => 'empty'
+                            ]
                         ],
                     ],
                 ],

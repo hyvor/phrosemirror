@@ -3,7 +3,7 @@
 namespace Hyvor\Phrosemirror\Test\Unit\Html\HtmlSerializer;
 
 use Hyvor\Phrosemirror\Document\Node;
-use Hyvor\Phrosemirror\Html\HtmlSerializer;
+use Hyvor\Phrosemirror\Converters\HtmlSerializer;
 
 // from tiptap-php
 it('serializes a document', function() {

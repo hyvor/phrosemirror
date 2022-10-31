@@ -1,6 +1,7 @@
 <?php
 
 use Hyvor\Phrosemirror\Test\TestTypes\Marks\CodeMarkType;
+use Hyvor\Phrosemirror\Test\TestTypes\Marks\EmptyMarkType;
 use Hyvor\Phrosemirror\Test\TestTypes\Marks\LinkMarkType;
 use Hyvor\Phrosemirror\Test\TestTypes\Marks\StrongMarkType;
 use Hyvor\Phrosemirror\Test\TestTypes\Nodes\BlockquoteNodeType;
@@ -37,7 +38,8 @@ function schema(array $nodes = [], array $marks = []) : Schema {
             [
                 'strong' => new StrongMarkType,
                 'link' => new LinkMarkType,
-                'code' => new CodeMarkType
+                'code' => new CodeMarkType,
+                'empty' => new EmptyMarkType
             ],
             $marks
         )

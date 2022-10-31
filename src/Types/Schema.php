@@ -21,7 +21,7 @@ class Schema
         return $this->nodes[$name] ?? null;
     }
 
-    public function getMakrTypeByName(string $name) : ?MarkType
+    public function getMarkTypeByName(string $name) : ?MarkType
     {
         return $this->marks[$name] ?? null;
     }

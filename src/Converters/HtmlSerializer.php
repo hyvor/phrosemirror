@@ -1,15 +1,12 @@
 <?php
-namespace Hyvor\Phrosemirror\Html;
+namespace Hyvor\Phrosemirror\Converters;
 
 use Hyvor\Phrosemirror\Document\Mark;
 use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Document\TextNode;
 
-
 class HtmlSerializer
 {
-
-    public function __construct() {}
 
     public function node(Node $node) : string
     {
@@ -18,7 +15,7 @@ class HtmlSerializer
 
 
         if ($nodeType->isText && $node instanceof TextNode) {
-            $content = htmlspecialchars($node->text);
+            $content = $node->getSafeText();
         } else {
 
             $childContent = '';

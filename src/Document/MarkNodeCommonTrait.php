@@ -2,7 +2,7 @@
 
 namespace Hyvor\Phrosemirror\Document;
 
-use Hyvor\Phrosemirror\Html\HtmlSerializer;
+use Hyvor\Phrosemirror\Converters\HtmlSerializer;
 use Hyvor\Phrosemirror\Types\MarkType;
 use Hyvor\Phrosemirror\Types\NodeType;
 
@@ -10,7 +10,7 @@ trait MarkNodeCommonTrait
 {
 
     /**
-     * @param class-string<MarkType|NodeType>|class-string<MarkType|NodeType>[] $type
+     * @param class-string<MarkType|NodeType>|class-string<MarkType|NodeType>[] $types
      */
     public function isOfType(string|array $types) : bool
     {

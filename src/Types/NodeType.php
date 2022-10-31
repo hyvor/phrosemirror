@@ -16,7 +16,7 @@ abstract class NodeType
     public string $attrs = AttrsType::class;
 
     /**
-     * @param \Hyvor\Phrosemirror\Document\Node<self> $node
+     * @param Node $node
      * @param string $children
      * @return string
      */
@@ -24,7 +24,5 @@ abstract class NodeType
     {
         return $children;
     }
-
-    public function fromHtml() : void {}
 
 }

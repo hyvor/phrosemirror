@@ -8,10 +8,9 @@ class JsonHelper
 {
 
     /**
-     * @param InputJsonType $json
      * @return array<mixed>
      */
-    public static function getJsonArray(array|object|string $json) : array
+    public static function getJsonArray(mixed $json) : array
     {
 
         if (is_array($json))
@@ -28,6 +27,8 @@ class JsonHelper
 
             return $json;
         }
+
+        throw new InvalidJsonException('JSON should be an array, object, or a string');
 
     }
 

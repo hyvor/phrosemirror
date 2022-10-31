@@ -23,9 +23,8 @@ class Mark
 
     /**
      * @param Schema $schema
-     * @param InputJsonType $json
      */
-    public static function fromJson(Schema $schema, $json) : self
+    public static function fromJson(Schema $schema, mixed $json) : self
     {
 
         $json = JsonHelper::getJsonArray($json);
@@ -34,8 +33,12 @@ class Mark
             throw new InvalidJsonException('Mark type is not set in JSON');
         }
 
+        if (!is_string($json['type'])) {
+            throw new InvalidJsonException('Mark type should be a string');
+        }
+
         $typeName = $json['type'];
-        $type = $schema->getMakrTypeByName($typeName);
+        $type = $schema->getMarkTypeByName($typeName);
 
         if ($type === null) {
             throw new InvalidJsonException("Mark type $typeName not found in schema");

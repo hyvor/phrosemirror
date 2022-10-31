@@ -12,12 +12,9 @@ abstract class MarkType
      */
     public string $attrs = AttrsType::class;
 
-
     public function toHtml(Mark $mark, string $children) : string
     {
         return $children;
     }
-
-    public function fromHtml() : void {}
 
 }

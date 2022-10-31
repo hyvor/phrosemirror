@@ -50,10 +50,7 @@ class Fragment implements IteratorAggregate
         return count($this->nodes);
     }
 
-    /**
-     * @param InputJsonType $json Content JSON array with nodes
-     */
-    public static function fromJson(Schema $schema, $json) : self
+    public static function fromJson(Schema $schema, mixed $json) : self
     {
 
         $json = JsonHelper::getJsonArray($json);

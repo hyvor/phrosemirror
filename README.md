@@ -290,7 +290,8 @@ $fragment->all(); // Node[]
 Next, let's convert your document to HTML. To do this, you have to define the `toHtml()` method in Node Types and Mark Types.
 
 ```php
-use Hyvor\Phrosemirror\Document\Node;use Hyvor\Phrosemirror\Types\NodeType;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Types\NodeType;
 
 class Paragraph extends NodeType
 {
@@ -308,7 +309,8 @@ class Paragraph extends NodeType
 Here is another example using the attributes of that Node.
 
 ```php
-use Hyvor\Phrosemirror\Document\Node;use Hyvor\Phrosemirror\Types\NodeType;
+use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Types\NodeType;
 
 class Image extends NodeType
 {
@@ -323,6 +325,15 @@ class Image extends NodeType
 ```
 
 > Do not directly use `$node->attrs->src` as the raw attributes are not HTML-escaped. Always use `$node->attr()` or `$node->attrs->get()`
+
+### HTML: Document -> HTML
+
+Use the `toHtml()` method to serialize a document (or any node) to HTML. 
+
+```php
+$document = Document::fromJson($schema, $json);
+$html = $document->toHtml();
+```
 
 ## Error Handling
 

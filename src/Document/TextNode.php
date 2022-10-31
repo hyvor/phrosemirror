@@ -5,9 +5,6 @@ namespace Hyvor\Phrosemirror\Document;
 use Hyvor\Phrosemirror\Types\AttrsType;
 use Hyvor\Phrosemirror\Types\NodeType;
 
-/**
- * @extends Node<NodeType>
- */
 class TextNode extends Node
 {
 
@@ -28,6 +25,11 @@ class TextNode extends Node
     {
         parent::__construct($type, $attrs, new Fragment([]), $marks);
         $this->text = $text;
+    }
+
+    public function getSafeText() : string
+    {
+        return htmlspecialchars($this->text);
     }
 
 }
