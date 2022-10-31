@@ -1,0 +1,6 @@
+parameters:
+    level: max
+    paths:
+        - src
+    typeAliases:
+        InputJsonType: 'array<mixed>|object|string'

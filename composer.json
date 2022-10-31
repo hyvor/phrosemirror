@@ -1,0 +1,35 @@
+{
+    "name": "hyvor/prosemirror",
+    "description": "Prosemirror Content Parser in PHP",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Hyvor\\Prosemirror\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Hyvor\\Prosemirror\\Test\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Supun",
+            "email": "supun@hyvor.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/collections": "^9.34"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.8",
+        "pestphp/pest": "^1.22"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}

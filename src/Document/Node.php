@@ -1,0 +1,176 @@
+<?php
+namespace Hyvor\Prosemirror\Document;
+
+use Hyvor\Prosemirror\Exception\InvalidJsonException;
+use Hyvor\Prosemirror\Types\AttrsType;
+use Hyvor\Prosemirror\Types\MarkType;
+use Hyvor\Prosemirror\Types\NodeType;
+use Hyvor\Prosemirror\Types\Schema;
+use Hyvor\Prosemirror\Util\JsonHelper;
+
+
+class Node
+{
+
+    use MarkNodeCommonTrait;
+
+    public function __construct(
+
+        public NodeType $type,
+
+
+        public AttrsType $attrs,
+
+        public Fragment $content,
+
+        /**
+         * @var Mark[]
+         */
+        public array $marks
+
+    ) {}
+
+
+    /**
+     * @param callable(Node) : void $closure
+     * @return self
+     */
+    public function traverse(callable $closure) : self
+    {
+
+        $closure($this);
+
+        foreach ($this->content->all() as $child) {
+            $child->traverse($closure);
+        }
+
+        return $this;
+
+    }
+
+    /**
+     * Check if the current node has a mark of the given type(s)
+     * This only makes sense to use in Text Nodes
+     *
+     * @param class-string<MarkType>|class-string<MarkType>[] $type
+     * @return bool
+     */
+    public function hasMark(string|array $type) : bool
+    {
+
+        $types = is_string($type) ? [$type] : $type;
+
+        foreach ($this->marks as $mark) {
+            if ($mark->isOfType($types))
+                return true;
+        }
+
+        return false;
+
+    }
+
+    /**
+     * @param class-string<NodeType>|class-string<NodeType>[]|null $types NodeTypes to select
+     * @param bool $nested Whether to return nested children. If set to false, only direct children will be checked
+     * @return array<Node>
+     */
+    public function getNodes(string|array|null $types = null, bool $nested = true) : array
+    {
+
+        $types = is_string($types) ? [$types] : $types;
+
+        $nodes = [];
+
+        foreach ($this->content as $node) {
+
+            if ($types === null || $node->isOfType($types))
+                $nodes[] = $node;
+
+        }
+
+        return $nodes;
+
+    }
+
+    public function getMarks()
+    {
+
+
+    }
+
+    /**
+     * A concatenation of all nested text node values
+     * @return string
+     */
+    public function allText() : string
+    {
+
+        if ($this instanceof TextNode)
+            return $this->text;
+
+        $text = '';
+        foreach ($this->content as $child) {
+            $text .= $child->allText();
+        }
+
+        return $text;
+
+    }
+
+
+    /**
+     * @param InputJsonType $json
+     * @return self
+     */
+    public static function fromJson(Schema $schema, $json) : self
+    {
+
+        $json = JsonHelper::getJsonArray($json);
+
+        if (!isset($json['type'])) {
+            throw new InvalidJsonException('Node type is not set in JSON');
+        }
+
+        $typeName = $json['type'];
+
+        $type = $schema->getNodeTypeByName($typeName);
+
+        if ($type === null) {
+            throw new InvalidJsonException("Node type $typeName not found in schema");
+        }
+
+        $jsonAttrs = $json['attrs'] ?? [];
+
+        if (!is_array($jsonAttrs)) {
+            throw new InvalidJsonException("Node Attrs should be an array in $typeName");
+        }
+
+        $attrs = new $type->attrs;
+        $attrs->setFromArray($jsonAttrs);
+
+        $jsonContent = $json['content'] ?? [];
+
+        if (!is_array($jsonContent)) {
+            throw new InvalidJsonException("Node content should be an array in $typeName");
+        }
+
+        $contentFragment = Fragment::fromJson($schema, $jsonContent);
+
+        $jsonMarks = $json['marks'] ?? [];
+
+        if (!is_array($jsonMarks)) {
+            throw new InvalidJsonException("Node marks should be an array in $typeName");
+        }
+
+        $marks = [];
+        foreach ($jsonMarks as $jsonMark) {
+            $marks[] = Mark::fromJson($schema, $jsonMark);
+        }
+
+        return $type->isText ?
+            new TextNode($type, $attrs, $json['text'] ?? '', $marks) :
+            new self($type, $attrs, $contentFragment, $marks);
+
+    }
+
+}
