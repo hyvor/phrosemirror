@@ -3,6 +3,7 @@
 namespace Hyvor\Phrosemirror\Document;
 
 use Hyvor\Phrosemirror\Converters\HtmlSerializer;
+use Hyvor\Phrosemirror\Types\AttrsType;
 use Hyvor\Phrosemirror\Types\MarkType;
 use Hyvor\Phrosemirror\Types\NodeType;
 
@@ -35,6 +36,11 @@ trait MarkNodeCommonTrait
     {
         $serializer = new HtmlSerializer;
         return $this instanceof Node ? $serializer->node($this) : $serializer->mark($this);
+    }
+
+    public function toJson() : string
+    {
+        return (string) json_encode($this->toArray());
     }
 
 

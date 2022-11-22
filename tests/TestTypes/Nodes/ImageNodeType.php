@@ -8,6 +8,8 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class ImageNodeType extends NodeType
 {
 
+    public string $name = 'image';
+
     public string $attrs = ImageNodeAttrs::class;
 
     public function toHtml(Node $node, string $children): string

@@ -19,7 +19,7 @@ class TextSerializer
 
         $node->traverse(function(Node $node) use (&$text, &$started, &$shouldSeparate) {
 
-            if ($node->type->isText && $node instanceof TextNode) {
+            if ($node->type->isText() && $node instanceof TextNode) {
                 if ($shouldSeparate && $started) {
                     $text .= self::BLOCK_SEPARATOR;
                 }

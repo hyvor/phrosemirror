@@ -24,22 +24,22 @@ function schema(array $nodes = [], array $marks = []) : Schema {
     return new Schema(
         array_merge(
             [
-                'doc' => new DocNodeType,
-                'text' => new TextNodeType,
-                'paragraph' => new ParagraphNodeType,
-                'image' => new ImageNodeType,
-                'blockquote' => new BlockquoteNodeType,
-                'heading' => new HeadingNodeType,
-                'code_block' => new CodeBlock,
+                new DocNodeType,
+                new TextNodeType,
+                new ParagraphNodeType,
+                new ImageNodeType,
+                new BlockquoteNodeType,
+                new HeadingNodeType,
+                new CodeBlock,
             ],
             $nodes
         ),
         array_merge(
             [
-                'strong' => new StrongMarkType,
-                'link' => new LinkMarkType,
-                'code' => new CodeMarkType,
-                'empty' => new EmptyMarkType
+                new StrongMarkType,
+                new LinkMarkType,
+                new CodeMarkType,
+                new EmptyMarkType
             ],
             $marks
         )

@@ -8,6 +8,8 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class ParagraphNodeType extends NodeType
 {
 
+    public string $name = 'paragraph';
+
     public function toHtml(Node $node, string $children): string
     {
         return "<p>$children</p>";

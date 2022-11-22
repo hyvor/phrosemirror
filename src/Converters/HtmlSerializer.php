@@ -14,7 +14,7 @@ class HtmlSerializer
         $nodeType = $node->type;
 
 
-        if ($nodeType->isText && $node instanceof TextNode) {
+        if ($nodeType->isText() && $node instanceof TextNode) {
             $content = $node->getSafeText();
         } else {
 

@@ -81,6 +81,7 @@ class ImageWithDefaultAttrs extends AttrsType
 
 class ImageWithDefault extends NodeType
 {
+    public string $name = 'image';
     public string $attrs = ImageWithDefaultAttrs::class;
 }
 
@@ -91,7 +92,7 @@ it('uses default value', function() {
     ];
 
     $image = Node::fromJson(schema([
-        'image' => new ImageWithDefault
+        new ImageWithDefault
     ]), $json);
     expect($image->attr('src'))->toBe('default.png');
 

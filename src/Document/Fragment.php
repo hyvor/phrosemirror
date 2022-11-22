@@ -18,9 +18,11 @@ class Fragment implements IteratorAggregate
         /**
          * @var Node[]
          */
-        private array $nodes
+        private array $nodes = []
     )
     {}
+
+    // === READ ===
 
     /**
      * @return Node[]
@@ -49,6 +51,72 @@ class Fragment implements IteratorAggregate
     {
         return count($this->nodes);
     }
+
+    /**
+     * @param callable(Node) : mixed $callback
+     * @return $this
+     */
+    public function each($callback) : self
+    {
+        foreach ($this->nodes as $node) {
+            $callback($node);
+        }
+        return $this;
+    }
+
+
+    // === WRITE ===
+
+    /**
+     * Add a node to the start of the fragment
+     */
+    public function addNodeToStart(Node $node) : self
+    {
+        array_unshift($this->nodes, $node);
+        return $this;
+    }
+
+    /**
+     * Add a node to the end of the fragment
+     */
+    public function addNodeToEnd(Node $node) : self
+    {
+        $this->nodes[] = $node;
+        return $this;
+    }
+
+    /**
+     * Add a node to the end of the fragment
+     */
+    public function addNode(Node $node) : self
+    {
+        return $this->addNodeToEnd($node);
+    }
+
+    /**
+     * Set nodes to a new array of nodes
+     * @param Node[] $nodes
+     */
+    public function setNodes(array $nodes) : self
+    {
+        $this->nodes = $nodes;
+        return $this;
+    }
+
+    /**
+     * @param callable(Node) : Node $callback
+     * @return $this
+     */
+    public function map($callback) : self
+    {
+        foreach ($this->nodes as &$node) {
+            $node = $callback($node);
+        }
+        return $this;
+    }
+
+
+    // === HELPERS ===
 
     public static function fromJson(Schema $schema, mixed $json) : self
     {

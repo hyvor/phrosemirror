@@ -8,6 +8,8 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class CodeBlock extends NodeType
 {
 
+    public string $name = 'code_block';
+
     public string $attrs = CodeBlockAttrs::class;
 
     public function toHtml(Node $node, string $children): string

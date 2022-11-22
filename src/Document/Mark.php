@@ -22,6 +22,26 @@ class Mark
     ) {}
 
     /**
+     * @return array<string, mixed>
+     */
+    public function toArray() : array
+    {
+
+        $array = [
+            'type' => $this->type->name,
+        ];
+
+        $attrsArray = $this->attrs->toArray();
+
+        if (count($attrsArray)) {
+            $array['attrs'] = $attrsArray;
+        }
+
+        return $array;
+
+    }
+
+    /**
      * @param Schema $schema
      */
     public static function fromJson(Schema $schema, mixed $json) : self

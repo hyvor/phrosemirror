@@ -5,16 +5,28 @@ namespace Hyvor\Phrosemirror\Types;
 class Schema
 {
 
-    public function __construct(
-        /**
-         * @var array<string, NodeType>
-         */
-        public array $nodes,
-        /**
-         * @var array<string, MarkType>
-         */
-        public array $marks
-    ) {}
+    /** @var array<string, NodeType> */
+    public array $nodes;
+
+    /** @var array<string, MarkType> */
+    public array $marks;
+
+    /**
+     * @param NodeType[] $nodes
+     * @param MarkType[] $marks
+     */
+    public function __construct(array $nodes, array $marks)
+    {
+
+        foreach ($nodes as $node) {
+            $this->nodes[$node->name] = $node;
+        }
+
+        foreach ($marks as $mark) {
+            $this->marks[$mark->name] = $mark;
+        }
+
+    }
 
     public function getNodeTypeByName(string $name) : ?NodeType
     {

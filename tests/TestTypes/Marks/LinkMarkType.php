@@ -8,6 +8,8 @@ use Hyvor\Phrosemirror\Types\MarkType;
 class LinkMarkType extends MarkType
 {
 
+    public string $name = 'link';
+
     public string $attrs = LinkMarkAttrs::class;
 
     public function toHtml(Mark $mark, string $children): string

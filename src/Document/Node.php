@@ -3,7 +3,6 @@ namespace Hyvor\Phrosemirror\Document;
 
 use Hyvor\Phrosemirror\Converters\TextSerializer;
 use Hyvor\Phrosemirror\Exception\InvalidJsonException;
-use Hyvor\Phrosemirror\Test\TestTypes\Nodes\TextNodeType;
 use Hyvor\Phrosemirror\Types\AttrsType;
 use Hyvor\Phrosemirror\Types\MarkType;
 use Hyvor\Phrosemirror\Types\NodeType;
@@ -20,15 +19,15 @@ class Node
 
         public NodeType $type,
 
+        // if null, and empty object will be placed
+        public AttrsType $attrs = new AttrsType,
 
-        public AttrsType $attrs,
-
-        public Fragment $content,
+        public Fragment $content = new Fragment,
 
         /**
          * @var Mark[]
          */
-        public array $marks
+        public array $marks = []
 
     ) {}
 
@@ -155,6 +154,54 @@ class Node
 
 
     /**
+     * @return array<string, mixed>
+     */
+    public function toArray() : array
+    {
+
+        $array = [
+            'type' => $this->type->name,
+        ];
+
+        // text
+        if ($this instanceof TextNode) {
+            $array['text'] = $this->text;
+        }
+
+        $attrs = $this->attrs->toArray();
+
+        if (count($attrs)) {
+            $array['attrs'] = $attrs;
+        }
+
+        if (count($this->marks)) {
+            $marksArray = [];
+
+            foreach ($this->marks as $mark) {
+                $marksArray[] = $mark->toArray();
+            }
+
+            $array['marks'] = $marksArray;
+        }
+
+        $children = $this->content->all();
+        if (count($children)) {
+
+            $contentArray = [];
+
+            foreach ($children as $child) {
+                $contentArray[] = $child->toArray();
+            }
+
+            $array['content'] = $contentArray;
+        }
+
+        return $array;
+
+    }
+
+
+    /**
      * @param mixed $json
      * @return self
      */
@@ -207,7 +254,7 @@ class Node
             $marks[] = Mark::fromJson($schema, $jsonMark);
         }
 
-        return $type->isText ?
+        return $type->isText() ?
             new TextNode($type, $attrs, $json['text'] ?? '', $marks) :
             new self($type, $attrs, $contentFragment, $marks);
 

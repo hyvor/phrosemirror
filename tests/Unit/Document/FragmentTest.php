@@ -7,6 +7,8 @@ use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Test\TestTypes\Nodes\BlockquoteNodeType;
 use Hyvor\Phrosemirror\Test\TestTypes\Nodes\ParagraphNodeType;
 
+// === READERS ===
+
 test('methods', function() {
 
     $schema = schema();
@@ -29,5 +31,69 @@ test('methods on empty', function() {
     expect($fragment->first())->toBeNull();
     expect($fragment->last())->toBeNull();
     expect($fragment->nth(10))->toBeNull();
+
+});
+
+
+
+test('each', function() {
+
+    $node = new Node(new ParagraphNodeType);
+    $fragment = new Fragment([$node, $node, $node]);
+
+    $i = 0;
+
+    $fragment->each(function (Node $node) use (&$i) {$i = $i + 1;});
+
+    expect($i)->toBe(3);
+
+});
+
+// === WRITERS ===
+
+test('add node to end', function() {
+
+    $fragment = new Fragment([new Node(new ParagraphNodeType)]);
+    $node = new Node(new BlockquoteNodeType);
+    $fragment->addNode($node);
+
+    expect($fragment->count())->toBe(2);
+    expect($fragment->last()->isOfType(BlockquoteNodeType::class))->toBeTrue();
+
+});
+
+test('add node to start', function() {
+
+    $fragment = new Fragment([new Node(new ParagraphNodeType)]);
+    $node = new Node(new BlockquoteNodeType);
+    $fragment->addNodeToStart($node);
+
+    expect($fragment->count())->toBe(2);
+    expect($fragment->first()->isOfType(BlockquoteNodeType::class))->toBeTrue();
+
+});
+
+test('set nodes', function() {
+
+    $fragment = new Fragment();
+    $node = new Node(new ParagraphNodeType);
+    $fragment->setNodes([$node]);
+
+    expect($fragment->count())->toBe(1);
+    expect($fragment->first()->isOfType(ParagraphNodeType::class))->toBeTrue();
+
+});
+
+test('map', function() {
+
+    $node = new Node(new ParagraphNodeType);
+    $fragment = new Fragment([$node, $node, $node]);
+
+    $fragment->map(function (Node $node) {
+        $node->type = new BlockquoteNodeType;
+        return $node;
+    });
+
+    expect($fragment->first()->isOfType(BlockquoteNodeType::class))->toBeTrue();
 
 });

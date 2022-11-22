@@ -7,6 +7,8 @@ use Hyvor\Phrosemirror\Document\Mark;
 abstract class MarkType
 {
 
+    public string $name;
+
     /**
      * @var class-string<AttrsType>
      */

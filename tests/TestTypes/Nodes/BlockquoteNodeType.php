@@ -8,6 +8,8 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class BlockquoteNodeType extends NodeType
 {
 
+    public string $name = 'blockquote';
+
     public function toHtml(Node $node, string $children): string
     {
         return "<blockquote>$children</blockquote>";

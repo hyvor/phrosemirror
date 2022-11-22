@@ -8,6 +8,8 @@ use Hyvor\Phrosemirror\Types\MarkType;
 class CodeMarkType extends MarkType
 {
 
+    public string $name = 'code';
+
     public function toHtml(Mark $mark, string $children): string
     {
         return "<code>$children</code>";

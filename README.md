@@ -12,6 +12,8 @@ Not yet possible, but coming soon:
 * Manipulate Documents (add, remove, edit Nodes and Marks)
 * Generating a document from HTML or converting HTML to JSON
 
+> This library is currently in beta. We will go through multiple changes. Do not use in production.
+
 ## Installation
 
 ```
@@ -27,22 +29,22 @@ use Hyvor\Phrosemirror\Types\Schema;
 
 $schema = new Schema(
     [
-        'doc' => new Doc,
-        'text' => new Text,
-        'paragraph' => new Paragraph,
-        'blockquote' => new Blockquote,
-        'image' => new Image
+        new Doc,
+        new Text,
+        new Paragraph,
+        new Blockquote,
+        new Image
     ],
     [
-        'strong' => new Strong,
-        'italic' => new Italic,  
+        new Strong,
+        new Italic,  
     ]
 );
 ```
 
-In the `Schema` constructor, first argument is a keyed array of **Nodes Types** and the second one is a keyed array of **Marks Types**.
+In the `Schema` constructor, first argument is an array of **Nodes Types** and the second one is an array of **Marks Types**.
 
-### Schema: Node Types
+### Node Types
 
 A basic node type looks like this:
 
@@ -50,10 +52,12 @@ A basic node type looks like this:
 use Hyvor\Phrosemirror\Types\NodeType;
 
 class Doc extends NodeType
-{}
+{
+    public string $name = 'doc';
+}
 ```
 
-### Schema: Mark Types
+### Mark Types
 
 A basic mark type looks like this:
 
@@ -61,10 +65,12 @@ A basic mark type looks like this:
 use Hyvor\Phrosemirror\Types\MarkType;
 
 class Strong extends MarkType
-{}
+{
+    public string $name = 'strong';
+}
 ```
 
-### Schema: Attributes (Attrs)
+### Attributes (Attrs)
 
 One main goal of this library is to achieve type-safety. Therefore, attributes are defined in a typed class.
 
@@ -89,6 +95,7 @@ use Hyvor\Phrosemirror\Types\NodeType;
 
 class Image extends NodeType
 {
+    // ...
     public string $attrs = ImageAttrs::class;
 }
 ```
@@ -118,7 +125,7 @@ $document = Document::fromJson($schema, $json);
 
 `$json` can be a JSON string, a PHP array, or a PHP object. If the given JSON is valid, `$document` will be an instance of `Hyvor\Phrosemirror\Document\Document`. If not, an error will be thrown. See Error Handling below.
 
-### Document: Node
+### Node
 
 A `Document` is just a `Node` with the `doc` type. These are the properties of a Node.
 
@@ -139,9 +146,9 @@ class Node
 
 `NodeType $type` is the type of the node, which you defined in the schema
 
-`AttrsType $attrs` is the attributes of the Node. This will be an object of the class you defined in Node Type. For example, as in the above example of Node Types, if the node is `Image`, `$attrs` will be an object of `ImageAttrs`.
+`AttrsType $attrs` is the attributes of the Node. This will be an object of the class you defined in Node Type attrs. For example, as in the above example of Node Types, if the node is `Image`, `$attrs` will be an object of `ImageAttrs`.
 
-`Fragment $content` is a collection of children Nodes
+`Fragment $content` is a collection of children Nodes.
 
 `Mark[] $marks` is an array of Marks assigned to this node.
 
@@ -242,7 +249,16 @@ $node->getMarks([Strong::class, Italic::class]);
 $node->getMarks(Link::class, false);
 ```
 
-### Document: Mark
+#### JSON Serialize
+
+You can serialize a Node/Document back to JSON.
+
+```php
+$node->toJson(); // JSON string
+$node->toArray(); // PHP array
+```
+
+### Mark
 
 ```php
 namespace Hyvor\Phrosemirror\Document;
@@ -259,7 +275,7 @@ class Mark
 
 `$type` and `$attrs` are analogous to those of Node's.
 
-`Mark` has `isOfType()` and `attr()`, which works similar to `Node`'s.
+`Mark` has `isOfType()`, `attr()`, `toArray()`, and `toJson()`, which works similar to `Node`'s methods.
 
 ```php
 $mark = Mark::fromJson(['type' => 'link', 'attrs' => ['src' => 'https://hyvor.com']);
@@ -268,12 +284,14 @@ $mark->isOfType(Strong::class); // false
 $mark->attr('src'); // https://hyvor.com
 ```
 
-### Document: Fragment
+### Fragment
 
 `$node->content` is a `Fragment`. It contains an array of children nodes. You can think of it just as an array, but with helper methods that makes things easier.
 
 ```php
 $fragment = $node->content();
+
+// READ
 
 $fragment->first(); // Node | null
 $fragment->last(); // Node | null
@@ -283,6 +301,17 @@ $fragment->count(); // int
 
 // get all Nodes in the Fragment as an array
 $fragment->all(); // Node[]
+
+// loop through each node
+$fragment->each(fn (Node $node) => false);
+
+// WRITE (Be careful, these methods changes the document)
+
+$fragment->addNodeToStart($node);
+$fragment->addNodeToEnd($node);
+$fragment->addNode($node); // same as addNodeToEnd
+$fragment->setNodes($nodes);
+$fragment->map(fn (Node $node) => $node); // update nodes in a callback
 ```
 
 ## 3. HTML

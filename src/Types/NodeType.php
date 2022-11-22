@@ -8,7 +8,7 @@ use Hyvor\Phrosemirror\Document\Node;
 abstract class NodeType
 {
 
-    public bool $isText = false;
+    public string $name;
 
     /**
      * @var class-string<AttrsType>
@@ -23,6 +23,11 @@ abstract class NodeType
     public function toHtml(Node $node, string $children) : string
     {
         return $children;
+    }
+
+    public function isText() : bool
+    {
+        return $this->name === 'text';
     }
 
 }
