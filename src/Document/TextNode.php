@@ -27,6 +27,11 @@ class TextNode extends Node
         $this->text = $text;
     }
 
+    public static function fromTypeAndText(NodeType $type, string $text) : self
+    {
+        return new self($type, new AttrsType, $text, []);
+    }
+
     public function getSafeText() : string
     {
         return htmlspecialchars($this->text);

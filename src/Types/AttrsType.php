@@ -9,6 +9,8 @@ use TypeError;
 class AttrsType
 {
 
+    final public function __construct() {}
+
     /**
      * @param string $name
      * @return scalar
@@ -32,6 +34,18 @@ class AttrsType
     public function toArray() : array
     {
         return get_object_vars($this);
+    }
+
+    /**
+     * @param array<string, mixed> $attrs
+     */
+    public static function fromArray(array $attrs) : static
+    {
+
+        $obj = new static;
+        $obj->setFromArray($attrs);
+        return $obj;
+
     }
 
     /**

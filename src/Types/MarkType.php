@@ -2,6 +2,7 @@
 
 namespace Hyvor\Phrosemirror\Types;
 
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
 use Hyvor\Phrosemirror\Document\Mark;
 
 abstract class MarkType
@@ -17,6 +18,14 @@ abstract class MarkType
     public function toHtml(Mark $mark, string $children) : string
     {
         return $children;
+    }
+
+    /**
+     * @return ParserRule[]
+     */
+    public function fromHtml() : array
+    {
+        return [];
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace Hyvor\Phrosemirror\Types;
 
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
 use Hyvor\Phrosemirror\Document\Node;
 
 
@@ -15,6 +16,11 @@ abstract class NodeType
      */
     public string $attrs = AttrsType::class;
 
+    public ?string $content = null;
+
+    public ?string $group = null;
+
+
     /**
      * @param Node $node
      * @param string $children
@@ -23,6 +29,14 @@ abstract class NodeType
     public function toHtml(Node $node, string $children) : string
     {
         return $children;
+    }
+
+    /**
+     * @return ParserRule[]
+     */
+    public function fromHtml() : array
+    {
+        return [];
     }
 
     public function isText() : bool
