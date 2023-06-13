@@ -94,7 +94,7 @@ class HtmlParser
                         $children = ($rule->getChildren)($child);
 
                         if ($children !== false) {
-                            $this->replaceChildren($child, ($rule->getChildren)($child));
+                            $this->replaceChildren($child, $children);
                         }
                     }
 
