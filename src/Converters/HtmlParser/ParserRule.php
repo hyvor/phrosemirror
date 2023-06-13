@@ -32,7 +32,7 @@ class ParserRule
          * For example, when <pre> is matched, you can use this get text content ignoring all tags inside it
          * See Pre Node for an example
          *
-         * @var callable(DOMElement) : (DOMNode|DOMNode[]) | null
+         * @var callable(DOMElement) : (DOMNode|DOMNode[]|false) | null
          */
         public $getChildren = null,
 

@@ -4,6 +4,12 @@ namespace Hyvor\Phrosemirror\Util;
 
 use DOMElement;
 
+
+/**
+ * Credit: TipTap PHP
+ * <https://github.com/ueberdosis/tiptap-php/blob/main/src/Utils/InlineStyle.php>
+ */
+
 class InlineStyle
 {
 

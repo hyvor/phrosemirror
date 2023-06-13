@@ -40,3 +40,43 @@ it('customizes children when parsing', function() {
     ]);
 
 });
+
+it('does not customize when returning false', function() {
+
+    $html = "<pre><code>var x = 0;</code></pre>";
+
+    $parser = new HtmlParser(schema(), [
+        new ParserRule(node: 'text', tag: '#text'),
+        new ParserRule(
+            node: 'code_block',
+            tag: 'pre',
+            getChildren: function (DOMNode $node) : false {
+                return false;
+            },
+        ),
+        new ParserRule(mark: 'code', tag: 'code'),
+    ]);
+
+    $document = $parser->parse($html);
+
+    expect($document->toArray())->toBe([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'code_block',
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'text' => 'var x = 0;',
+                        'marks' => [
+                            [
+                                'type' => 'code',
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]);
+
+});

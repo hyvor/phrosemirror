@@ -91,7 +91,11 @@ class HtmlParser
                 if ($child->hasChildNodes() && $child instanceof DOMElement) {
 
                     if ($rule->getChildren) {
-                        $this->replaceChildren($child, ($rule->getChildren)($child));
+                        $children = ($rule->getChildren)($child);
+
+                        if ($children !== false) {
+                            $this->replaceChildren($child, ($rule->getChildren)($child));
+                        }
                     }
 
                     $node->content = $this->parseElementChildren($child);
