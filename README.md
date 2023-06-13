@@ -3,14 +3,14 @@ Phrosemirror is a library to work with Prosemirror (or TipTap) JSON content in P
 Here is what this library can do:
 
 * Convert Prosemirror JSON into a Document with typed Nodes, Marks, and Attributes
-* Analyze Documents
+* Analyze and manipulate Documents
 * Convert a Document to HTML
 * Convert a Document to Text
+* Parse HTML to a Document
 
-Not yet possible, but coming soon:
+Coming soon:
 
-* Manipulate Documents (add, remove, edit Nodes and Marks)
-* Generating a document from HTML or converting HTML to JSON
+* `content` and `group` in schema for further validation
 
 > This library is currently in beta. We will go through multiple changes. Do not use in production.
 
@@ -363,6 +363,95 @@ Use the `toHtml()` method to serialize a document (or any node) to HTML.
 $document = Document::fromJson($schema, $json);
 $html = $document->toHtml();
 ```
+
+## Parsing HTML
+
+The `HtmlParser` class is responsible for parsing HTML to a Document. It takes the Schema and some parsing rules to parse the HTML.
+
+```php
+<?php
+use Hyvor\Phrosemirror\Converters\HtmlParser\HtmlParser;use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+
+$schema = new Schema($nodes, $marks); // this is the same schema you create for the document
+$parser = new HtmlParser($schema, [
+    new ParserRule(tag: 'p', node: 'paragraph'),
+    new ParserRule(tag: '#text', node: 'text'),
+    // ... other rules
+])
+```
+
+However, in most cases, you only need one rule set to parse from multiple HTML inputs. Therefore, you can directly define rules in the Schema (in the `fromHtml()` method of Nodes and Marks).
+
+```php
+use Hyvor\Phrosemirror\Types\NodeType;
+use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Document\Node;
+
+class Paragraph extends NodeType
+{
+
+    public string $name = 'paragraph';
+
+    public function toHtml(Node $node, string $children): string
+    {
+        return "<p>$children</p>";
+    }
+
+    public function fromHtml(): array
+    {
+        return [
+            new ParserRule(tag: 'p'),
+        ];
+    }
+
+}
+```
+
+The `fromHtml()` method should return `ParserRule[]`. Here, the `node` property is not required as it is the same as the Node Type's name.
+
+### Parsing HTML Attributes to Node Attributes
+
+Use the `getAttrs()` method to parse attributes from the HTML element.
+
+```php
+use DOMElement;
+
+class Image extends NodeType
+{
+    public string $name = 'image';
+    public string $attrs = ImageAttrs::class;
+    
+    public function fromHtml() : array
+    {
+    
+        return [
+            new ParserRule(
+                tag: 'img', 
+                getAttrs: fn (DOMElement $element) => ImageAttrs::fromArray([
+                    'src' => $element->getAttribute('src'),
+                    'alt' => $element->getAttribute('alt'),
+                ])
+            )
+        ];
+    
+    }
+}
+```
+
+The `getAttrs()` callback should return one of the following:
+
+- `false` to ignore the element
+- `null` if the attributes are not found
+- `AttrsType` if the attributes are found
+
+### Parsing Using Styles
+
+You can also parse HTML elements using their styles instead of the tag.
+
+```php
+
+```
+
 
 ## Error Handling
 
