@@ -28,6 +28,11 @@ class AttrsType
         return $attr;
     }
 
+    public function set(string $name, mixed $value) : void
+    {
+        $this->setFromArray(array_merge($this->toArray(), [$name => $value]));
+    }
+
     /**
      * @return array<string, mixed>
      */

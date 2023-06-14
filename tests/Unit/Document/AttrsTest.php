@@ -113,3 +113,22 @@ it('uses default value when the attribute is null', function() {
     expect($image->attr('src'))->toBe('default.png');
 
 });
+
+it('sets attribute', function() {
+
+    $json = [
+        'type' => 'image',
+        'attrs' => [
+            'src' => null
+        ]
+    ];
+
+    $image = Node::fromJson(schema([
+        'image' => new ImageWithDefault
+    ]), $json);
+    expect($image->attr('src'))->toBe('default.png');
+
+    $image->attrs->set('src', 'image.png');
+    expect($image->attr('src'))->toBe('image.png');
+
+});
