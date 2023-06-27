@@ -14,6 +14,8 @@ class HeadingNodeType extends NodeType
 
     public string $attrs = HeadingNodeAttrs::class;
 
+    public string $group = 'block';
+
     public function toHtml(Node $node, string $children): string
     {
 

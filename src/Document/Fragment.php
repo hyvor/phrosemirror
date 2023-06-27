@@ -93,6 +93,15 @@ class Fragment implements IteratorAggregate
         return $this->addNodeToEnd($node);
     }
 
+    public function removeNode(Node $node) : self
+    {
+        return $this->setNodes(
+            array_values( // reindex
+                array_filter($this->nodes, fn($n) => $n !== $node)
+            )
+        );
+    }
+
     /**
      * Set nodes to a new array of nodes
      * @param Node[] $nodes
