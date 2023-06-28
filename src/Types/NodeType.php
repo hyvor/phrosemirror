@@ -21,6 +21,8 @@ abstract class NodeType
 
     public string $group;
 
+    public bool $inline = false;
+
 
     /**
      * @param Node $node

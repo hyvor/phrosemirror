@@ -6,6 +6,7 @@ use Hyvor\Phrosemirror\Content\Nfa\Nfa;
 use Hyvor\Phrosemirror\Content\Nfa\NfaState;
 use Hyvor\Phrosemirror\Document\Fragment;
 use Hyvor\Phrosemirror\Document\Node;
+use Hyvor\Phrosemirror\Document\TextNode;
 use Hyvor\Phrosemirror\Types\Schema;
 
 /**
@@ -35,12 +36,31 @@ class Sanitizer
     private function sanitizeNode(Node $node) : void
     {
 
-        $expr = ContentExpression::getExpr($node->type->content, $this->schema);
         $content = $node->content;
+        $this->matchChildren($node, fix: true);
+
+        foreach ($content as $child) {
+            if ($child->content->count() > 0) {
+                $this->sanitizeNode($child);
+            }
+        }
+
+    }
+
+    private function matchChildren(Node $node, bool $fix = false) : bool
+    {
+
+        $expr = ContentExpression::getExpr($node->type->content, $this->schema);
+
+        if ($node instanceof TextNode) {
+            return false;
+        }
 
         if (!$expr) {
-            $node->content = new Fragment([]);
-            return;
+            if ($fix) {
+                $node->content = new Fragment([]);
+            }
+            return false;
         }
 
         $nfa = Nfa::fromExpr($expr);
@@ -48,19 +68,173 @@ class Sanitizer
         $currentStates = [];
         $this->addNextState($nfa->start, $currentStates, []);
 
-        foreach ($content as $node) {
+        foreach ($node->content as $child) {
             $nextStates = [];
-            foreach ($currentStates as $state) {
-                $nextState = $state->transition[$node->type->name] ?? null;
-                if ($nextState) {
-                    $this->addNextState($nextState, $nextStates, []);
+            $matched = false;
+
+            $this->addNextStateFromCurrentStates($nextStates, $currentStates, $child, $matched);
+
+            /**
+             * Try to fix invalid content
+             */
+            $removed = false;
+            if (!$matched) {
+                if ($fix) {
+
+                    $currentIndex = $node->content->getIndexOfNode($child);
+                    $lastChild = $currentIndex && $currentIndex > 0 ?
+                        $node->content->nth($currentIndex) :
+                        null;
+
+                    if (
+                        $child->type->inline &&
+                        $lastChild &&
+                        $this->copyInlineChildToLastNode($child, $lastChild)
+                    ) {
+                        $node->content->removeNode($child);
+                        $removed = true;
+                    }
+
+                    // try to wrap the node with a valid node
+                    if ($wrapper = $this->findWrapper($currentStates, $child)) {
+                        $node->content->replaceNode($child, $wrapper);
+
+                        /**
+                         * We need to add next states as if we matched
+                         * the NFA path of the wrapper node
+                         */
+                        $nextStates = [];
+                        $this->addNextStateFromCurrentStates($nextStates, $currentStates, $wrapper);
+
+                    } else {
+                        // remove the node as the last resort
+                        $node->content->removeNode($child);
+                        $removed = true;
+                    }
+
+
+                } else {
+                    return false;
                 }
             }
-            $currentStates = $nextStates;
+
+            /**
+             * If the element is removed, we don't need to update the current states
+             * We will match the next element with the same states
+             */
+            if ($removed === false) {
+                $currentStates = $nextStates;
+            }
         }
 
-        dd($currentStates);
+        return $this->hasMatchingStates($currentStates);
 
+    }
+
+    private function copyInlineChildToLastNode(Node $child, Node $lastNode) : bool
+    {
+
+        $lastNodeCopy = clone $lastNode;
+        $lastNodeCopy->content->addNode($child);
+
+        /**
+         * Only copy if the content is valid
+         * when the last node is added
+         */
+        if ($this->matchChildren($lastNodeCopy)) {
+            $lastNode->content->setNodes($lastNodeCopy->content->all());
+            return true;
+        }
+
+        return false;
+
+    }
+
+    /**
+     * @param NfaState[] $states
+     * @param Node $node
+     */
+    private function findWrapper(array $states, Node $node) : ?Node
+    {
+
+        $possibleNodeTypeNames = [];
+
+        foreach ($states as $state) {
+            foreach ($state->transition as $name => $nextState) {
+                if (!in_array($name, $possibleNodeTypeNames))
+                    $possibleNodeTypeNames[] = $name;
+            }
+        }
+
+        foreach ($possibleNodeTypeNames as $nodeTypeName) {
+
+            $nodeType = $this->schema->getNodeTypeByName($nodeTypeName);
+
+            if (!$nodeType)
+                continue;
+
+            $attrs = new $nodeType->attrs;
+
+            /**
+             * We need all properties to be optional to generate
+             * this wrapper node
+             */
+            if (!$attrs->allPropertiesAreOptional())
+                continue;
+
+            $fragment = new Fragment([$node]);
+
+            $wrapper = new Node(
+                $nodeType,
+                $attrs,
+                $fragment,
+            );
+
+            $expr = ContentExpression::getExpr($nodeType->content, $this->schema);
+
+            if (!$expr)
+                continue;
+
+            if ($this->matchChildren($wrapper))
+                return $wrapper;
+
+        }
+
+        return null;
+
+    }
+
+    /**
+     * @param NfaState[] $states
+     */
+    private function hasMatchingStates(array $states) : bool
+    {
+        foreach ($states as $state) {
+            if ($state->isEnd) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param NfaState[] $nextStates
+     * @param NfaState[] $currentStates
+     */
+    private function addNextStateFromCurrentStates(
+        array &$nextStates,
+        array $currentStates,
+        Node $node,
+        bool &$matched = false
+    ) : void
+    {
+        foreach ($currentStates as $state) {
+            $nextState = $state->transition[$node->type->name] ?? null;
+            if ($nextState) {
+                $matched = true;
+                $this->addNextState($nextState, $nextStates, []);
+            }
+        }
     }
 
 

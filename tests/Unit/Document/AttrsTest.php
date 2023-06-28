@@ -5,6 +5,7 @@ namespace Hyvor\Phrosemirror\Test\Unit\Document;
 use Hyvor\Phrosemirror\Document\Document;
 use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Exception\InvalidAttributeTypeException;
+use Hyvor\Phrosemirror\Test\TestTypes\Nodes\CodeBlockAttrs;
 use Hyvor\Phrosemirror\Test\TestTypes\Nodes\ImageNodeAttrs;
 use Hyvor\Phrosemirror\Test\TestTypes\Nodes\ImageNodeType;
 use Hyvor\Phrosemirror\Types\AttrsType;
@@ -131,4 +132,9 @@ it('sets attribute', function() {
     $image->attrs->set('src', 'image.png');
     expect($image->attr('src'))->toBe('image.png');
 
+});
+
+it('gives all properties are optional', function() {
+    expect((new ImageNodeAttrs())->allPropertiesAreOptional())->toBeFalse();
+    expect((new CodeBlockAttrs())->allPropertiesAreOptional())->toBeTrue();
 });

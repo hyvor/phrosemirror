@@ -7,6 +7,6 @@ use Hyvor\Phrosemirror\Types\AttrsType;
 class CodeBlockAttrs extends AttrsType
 {
 
-    public ?string $language;
+    public ?string $language = null;
 
 }

@@ -102,6 +102,22 @@ class Fragment implements IteratorAggregate
         );
     }
 
+    public function replaceNode(Node $oldNode, Node $newNode) : self
+    {
+        return $this->setNodes(
+            array_map(
+                fn($n) => $n === $oldNode ? $newNode : $n,
+                $this->nodes
+            )
+        );
+    }
+
+    public function getIndexOfNode(Node $node) : ?int
+    {
+        $search = array_search($node, $this->nodes, true);
+        return $search === false ? null : intval($search);
+    }
+
     /**
      * Set nodes to a new array of nodes
      * @param Node[] $nodes

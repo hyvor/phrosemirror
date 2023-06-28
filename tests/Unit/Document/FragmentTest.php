@@ -110,3 +110,19 @@ it('removes a node and indexes correctly', function() {
     expect($fragment->first()->isOfType(BlockquoteNodeType::class))->toBeTrue();
 
 });
+
+it('replaces a node', function() {
+
+    $paragraph = new Node(new ParagraphNodeType);
+    $blockquote = new Node(new BlockquoteNodeType);
+    $fragment = new Fragment([$paragraph, $blockquote]);
+
+    $p2 = new Node(new ParagraphNodeType);
+
+    $fragment->replaceNode($blockquote, $p2);
+
+    expect($fragment->count())->toBe(2);
+    expect($fragment->first()->isOfType(ParagraphNodeType::class))->toBeTrue();
+    expect($fragment->nth(2)->isOfType(ParagraphNodeType::class))->toBeTrue();
+
+});
