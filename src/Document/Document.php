@@ -11,7 +11,7 @@ use Hyvor\Phrosemirror\Util\JsonHelper;
 class Document extends Node
 {
 
-    public static function fromJson(Schema $schema, $json): static
+    public static function fromJson(Schema $schema, $json): Document
     {
 
         $json = JsonHelper::getJsonArray($json);
@@ -19,7 +19,9 @@ class Document extends Node
         if (($json['type'] ?? null) !== 'doc')
             throw new InvalidJsonException('The top node must be a doc node');
 
-        return parent::fromJson($schema, $json);
+        $node = parent::fromJson($schema, $json);
+
+        return new Document($node->type, $node->attrs, $node->content, $node->marks);
     }
 
 }
