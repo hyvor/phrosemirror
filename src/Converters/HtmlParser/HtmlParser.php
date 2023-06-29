@@ -5,6 +5,7 @@ namespace Hyvor\Phrosemirror\Converters\HtmlParser;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
+use Hyvor\Phrosemirror\Content\Sanitizer;
 use Hyvor\Phrosemirror\Document\Document;
 use Hyvor\Phrosemirror\Document\Fragment;
 use Hyvor\Phrosemirror\Document\Mark;
@@ -44,7 +45,7 @@ class HtmlParser
 
     }
 
-    public function parse(string $html) : Document
+    public function parse(string $html, bool $sanitize = false) : Document
     {
 
         // DOMDocument throws an error for custom HTML tags
@@ -62,6 +63,10 @@ class HtmlParser
         $content = $this->parseElementChildren($body);
 
         $this->document->content = $content;
+
+        if ($sanitize) {
+            return Sanitizer::sanitize($this->schema, $this->document);
+        }
 
         return $this->document;
 

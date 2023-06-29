@@ -16,6 +16,8 @@ class HeadingNodeType extends NodeType
 
     public string $group = 'block';
 
+    public ?string $content = 'inline*';
+
     public function toHtml(Node $node, string $children): string
     {
 

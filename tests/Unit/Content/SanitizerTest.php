@@ -443,7 +443,7 @@ it('empties children when content is not set', function() {
 
 });
 
-/*it('fills children when possible', function() {
+it('promotes children before deleting when possible', function() {
 
     $schema = ($this->getSchema)(new class extends NodeType {
         public string $name = 'doc';
@@ -453,7 +453,17 @@ it('empties children when content is not set', function() {
     $doc = Document::fromJson($schema, [
         'type' => 'doc',
         'content' => [
-            ['type' => 'paragraph'],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'content' => [
+                            ['type' => 'text', 'text' => 'hello']
+                        ]
+                    ]
+                ]
+            ],
         ]
     ]);
 
@@ -462,9 +472,48 @@ it('empties children when content is not set', function() {
     expect($sanitized->toJSON())->toEqual(json_encode([
         'type' => 'doc',
         'content' => [
-            ['type' => 'paragraph'],
-            ['type' => 'paragraph'],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'text', 'text' => 'hello']
+                ]
+            ],
         ]
     ]));
 
-});*/
+});
+
+it('does not promote children when not possible', function() {
+
+    $schema = ($this->getSchema)(new class extends NodeType {
+        public string $name = 'doc';
+        public ?string $content = 'paragraph paragraph?';
+    });
+
+    // not possible to promote all 2
+    // because then it will be 3 paras
+    $doc = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'paragraph'],
+                    ['type' => 'paragraph']
+                ]
+            ],
+        ]
+    ]);
+
+    $sanitized = Sanitizer::sanitize($schema, $doc);
+
+    expect($sanitized->toJSON())->toEqual(json_encode([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+            ],
+        ]
+    ]));
+
+});

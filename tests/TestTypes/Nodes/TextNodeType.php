@@ -11,6 +11,8 @@ class TextNodeType extends NodeType
     public string $name = 'text';
     public bool $inline = true;
 
+    public string $group = 'inline';
+
     public function fromHtml(): array
     {
 

@@ -4,6 +4,7 @@ namespace Hyvor\Phrosemirror\Content;
 
 use Hyvor\Phrosemirror\Content\Nfa\Nfa;
 use Hyvor\Phrosemirror\Content\Nfa\NfaState;
+use Hyvor\Phrosemirror\Document\Document;
 use Hyvor\Phrosemirror\Document\Fragment;
 use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Document\TextNode;
@@ -18,17 +19,17 @@ use Hyvor\Phrosemirror\Types\Schema;
 class Sanitizer
 {
 
-    public static function sanitize(Schema $schema, Node $doc) : Node
+    public static function sanitize(Schema $schema, Document $doc) : Document
     {
         return (new self($schema, $doc))->getSanitizedDocument();
     }
 
     public function __construct(
         private readonly Schema $schema,
-        private readonly ?Node $doc = null,
+        private readonly ?Document $doc = null,
     ) {}
 
-    public function getSanitizedDocument() : Node
+    public function getSanitizedDocument() : Document
     {
         if (!$this->doc)
             throw new SanitizerException('Document is not set');
@@ -98,9 +99,8 @@ class Sanitizer
                         $node->content->removeNode($child);
                         $removed = true;
                     }
-
                     // try to wrap the node with a valid node
-                    if ($wrapper = $this->findWrapper($currentStates, $child)) {
+                    else if ($wrapper = $this->findWrapper($currentStates, $child)) {
                         $node->content->replaceNode($child, $wrapper);
 
                         /**
@@ -110,6 +110,12 @@ class Sanitizer
                         $nextStates = [];
                         $this->addNextStateFromCurrentStates($nextStates, $currentStates, $wrapper);
 
+                    } elseif ($this->tryPromoteGrandChildren($node, $child)) {
+                        /**
+                         * tryPromoteGrandChildren() matches all content after adding grandchildren
+                         * So, no need to go to next states
+                         */
+                        return true;
                     } else {
                         // remove the node as the last resort
                         $node->content->removeNode($child);
@@ -132,6 +138,38 @@ class Sanitizer
         }
 
         return $this->hasMatchingStates($currentStates);
+
+    }
+
+    /**
+     * When $child is not matched inside $node,
+     * We try to promote grand children to $node replacing the $child
+     * If this matches, we return true
+     */
+    private function tryPromoteGrandChildren(Node $node, Node $child) : bool
+    {
+
+        $nodeCopy = clone $node;
+        $childCopy = clone $child;
+
+        $fragment = $nodeCopy->content;
+        $nodeChildren = $fragment->all();
+        $index = $fragment->getIndexOfNode($child);
+
+        if ($index === null)
+            return false;
+
+        $grandChildren = $childCopy->content->all();
+
+        array_splice($nodeChildren, $index + 1, 1, $grandChildren);
+        $fragment->setNodes($nodeChildren);
+
+        if ($this->matchChildren($nodeCopy)) {
+            $node->content->setNodes($nodeCopy->content->all());
+            return true;
+        }
+
+        return false;
 
     }
 
