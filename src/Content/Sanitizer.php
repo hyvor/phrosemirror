@@ -7,6 +7,7 @@ use Hyvor\Phrosemirror\Content\Nfa\NfaState;
 use Hyvor\Phrosemirror\Document\Fragment;
 use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Document\TextNode;
+use Hyvor\Phrosemirror\Exception\SanitizerException;
 use Hyvor\Phrosemirror\Types\Schema;
 
 /**
@@ -24,11 +25,14 @@ class Sanitizer
 
     public function __construct(
         private readonly Schema $schema,
-        private readonly Node $doc,
+        private readonly ?Node $doc = null,
     ) {}
 
     public function getSanitizedDocument() : Node
     {
+        if (!$this->doc)
+            throw new SanitizerException('Document is not set');
+
         $this->sanitizeNode($this->doc);
         return $this->doc;
     }
@@ -47,7 +51,7 @@ class Sanitizer
 
     }
 
-    private function matchChildren(Node $node, bool $fix = false) : bool
+    public function matchChildren(Node $node, bool $fix = false) : bool
     {
 
         $expr = ContentExpression::getExpr($node->type->content, $this->schema);

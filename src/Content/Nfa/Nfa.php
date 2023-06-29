@@ -21,15 +21,14 @@ class Nfa
         public NfaState $end
     ) {}
 
-
-    public static function fromEpsilon() : self
+    /*public static function fromEpsilon() : self
     {
         $start = new NfaState(false);
         $end = new NfaState(true);
         $start->addEpsilonTransition($end);
 
         return new Nfa($start, $end);
-    }
+    }*/
 
     public static function fromType(NodeType $type) : self
     {

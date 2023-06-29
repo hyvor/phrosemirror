@@ -42,7 +42,7 @@ class SanitizerImage extends NodeType
 }
 class SanitizerImageAttrs extends AttrsType
 {
-    public string $src;
+    public ?string $src = null;
 }
 
 class SanitizerOrderedList extends NodeType
@@ -312,3 +312,159 @@ it('removes invalid elements when cannot be wrapped', function() {
     ]));
 
 });
+
+it('works with range expr', function() {
+
+    $schema = ($this->getSchema)(new class extends NodeType {
+        public string $name = 'doc';
+        public ?string $content = 'paragraph paragraph{1,2}';
+    });
+
+    $doc = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+        ]
+    ]);
+
+    $sanitized = Sanitizer::sanitize($schema, $doc);
+
+    expect($sanitized->toJSON())->toEqual(json_encode([
+        'type' => 'doc',
+        'content' => [
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+        ]
+    ]));
+
+});
+
+it('works with range expr without ending', function() {
+
+    $schema = ($this->getSchema)(new class extends NodeType {
+        public string $name = 'doc';
+        public ?string $content = 'paragraph paragraph{1,}';
+    });
+
+    $doc1 = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+        ]
+    ]);
+
+    $doc2 = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+        ]
+    ]);
+
+    $doc3 = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            ['type' => 'paragraph'],
+        ]
+    ]);
+
+    $sanitizer = new Sanitizer($schema);
+    expect($sanitizer->matchChildren($doc1))->toBeTrue();
+    expect($sanitizer->matchChildren($doc2))->toBeTrue();
+    expect($sanitizer->matchChildren($doc3))->toBeFalse();
+
+});
+
+it('works with optional expr', function() {
+
+    $schema = ($this->getSchema)(new class extends NodeType {
+        public string $name = 'doc';
+        public ?string $content = 'paragraph paragraph?';
+    });
+
+    $doc1 = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+        ]
+    ]);
+
+    $doc2 = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            ['type' => 'paragraph'],
+        ]
+    ]);
+
+    $doc3 = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            ['type' => 'paragraph'],
+            ['type' => 'blockquote'],
+        ]
+    ]);
+
+    $sanitizer = new Sanitizer($schema);
+    expect($sanitizer->matchChildren($doc1))->toBeTrue();
+    expect($sanitizer->matchChildren($doc2))->toBeTrue();
+    expect($sanitizer->matchChildren($doc3))->toBeFalse();
+
+});
+
+it('empties children when content is not set', function() {
+
+    $schema = ($this->getSchema)(new class extends NodeType {
+        public string $name = 'doc';
+    });
+
+    $doc = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+        ]
+    ]);
+
+    $sanitized = Sanitizer::sanitize($schema, $doc);
+
+    expect($sanitized->toJSON())->toEqual(json_encode([
+        'type' => 'doc'
+    ]));
+
+});
+
+/*it('fills children when possible', function() {
+
+    $schema = ($this->getSchema)(new class extends NodeType {
+        public string $name = 'doc';
+        public ?string $content = 'paragraph paragraph?';
+    });
+
+    $doc = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            ['type' => 'paragraph'],
+        ]
+    ]);
+
+    $sanitized = Sanitizer::sanitize($schema, $doc);
+
+    expect($sanitized->toJSON())->toEqual(json_encode([
+        'type' => 'doc',
+        'content' => [
+            ['type' => 'paragraph'],
+            ['type' => 'paragraph'],
+        ]
+    ]));
+
+});*/
