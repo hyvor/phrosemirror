@@ -94,4 +94,20 @@ class AttrsType
 
     }
 
+    public function allPropertiesAreOptional() : bool
+    {
+
+        $classReflection = new ReflectionClass($this);
+
+        foreach ($classReflection->getProperties() as $attr) {
+            if (!$attr->isPublic())
+                continue;
+            if (!$attr->hasDefaultValue())
+                return false;
+        }
+
+        return true;
+
+    }
+
 }

@@ -2,6 +2,7 @@
 
 namespace Hyvor\Phrosemirror\Types;
 
+use Hyvor\Phrosemirror\Content\ContentExpression;
 use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
 use Hyvor\Phrosemirror\Document\Node;
 
@@ -18,7 +19,9 @@ abstract class NodeType
 
     public ?string $content = null;
 
-    public ?string $group = null;
+    public string $group;
+
+    public bool $inline = false;
 
 
     /**
@@ -42,6 +45,22 @@ abstract class NodeType
     public function isText() : bool
     {
         return $this->name === 'text';
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getGroups() : array
+    {
+        if (!isset($this->group))
+            return [];
+
+        $groups = preg_split('/\s+/', $this->group);
+
+        if (!$groups)
+            return [];
+
+        return $groups;
     }
 
 }
