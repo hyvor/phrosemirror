@@ -94,10 +94,12 @@ it('groups', function() {
    $expr = new ContentExpression('block+', schema());
     expect($expr->expr)->toBeInstanceOf(PlusExpr::class);
     expect($expr->expr->expr)->toBeInstanceOf(ChoiceExpr::class);
-    expect($expr->expr->expr->exprs)->toHaveCount(2);
+
+    expect($expr->expr->expr->exprs)->toHaveCount(3);
 
     expect($expr->expr->expr->exprs[0]->type->name)->toBe('paragraph');
-    expect($expr->expr->expr->exprs[1]->type->name)->toBe('heading');
+    expect($expr->expr->expr->exprs[1]->type->name)->toBe('blockquote');
+    expect($expr->expr->expr->exprs[2]->type->name)->toBe('heading');
 });
 
 it('empty', function() {

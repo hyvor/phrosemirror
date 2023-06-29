@@ -205,7 +205,7 @@ class Node
      * @param mixed $json
      * @return self
      */
-    public static function fromJson(Schema $schema, $json) : self
+    public static function fromJson(Schema $schema, $json) : static
     {
 
         $json = JsonHelper::getJsonArray($json);
@@ -256,7 +256,7 @@ class Node
 
         return $type->isText() ?
             new TextNode($type, $attrs, $json['text'] ?? '', $marks) :
-            new self($type, $attrs, $contentFragment, $marks);
+            new static($type, $attrs, $contentFragment, $marks);
 
     }
 

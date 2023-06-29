@@ -11,7 +11,7 @@ use Hyvor\Phrosemirror\Util\JsonHelper;
 class Document extends Node
 {
 
-    public static function fromJson(Schema $schema, $json): Node
+    public static function fromJson(Schema $schema, $json): static
     {
 
         $json = JsonHelper::getJsonArray($json);
