@@ -203,7 +203,6 @@ class Node
 
     /**
      * @param mixed $json
-     * @return self
      */
     public static function fromJson(Schema $schema, $json) : static
     {
