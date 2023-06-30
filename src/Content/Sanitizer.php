@@ -90,7 +90,7 @@ class Sanitizer
 
                     $currentIndex = $node->content->getIndexOfNode($child);
                     $lastChild = $currentIndex && $currentIndex > 0 ?
-                        $node->content->nth($currentIndex) :
+                        $node->content->nth($currentIndex - 1) :
                         null;
 
                     if (

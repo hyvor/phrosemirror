@@ -61,6 +61,7 @@ class HtmlParser
             throw new ParserException('Invalid HTML: no body element');
 
         $content = $this->parseElementChildren($body);
+        $this->normalizeWhitespace($content);
 
         $this->document->content = $content;
 
@@ -191,8 +192,7 @@ class HtmlParser
             $text = preg_replace('/\n+/', " ", $text);
         }
 
-        /** @var string $text */
-        return TextNode::fromTypeAndText($nodeType, $text);
+        return TextNode::fromTypeAndText($nodeType, strval($text));
 
     }
 
@@ -252,6 +252,39 @@ class HtmlParser
 
         foreach ($children as $child) {
             $element->appendChild($child);
+        }
+
+    }
+
+    /**
+     * Removes text nodes that only contain whitespace
+     * only if the next or previous sibling is not an inline node
+     */
+    private function normalizeWhitespace(Fragment $fragment) : void
+    {
+
+        foreach ($fragment as $child) {
+
+            $i = $fragment->getIndexOfNode($child);
+
+            if ($child instanceof TextNode && trim($child->text) === '') {
+
+                $prev = $fragment->nth($i - 1) ?? null;
+                $next = $fragment->nth($i + 1) ?? null;
+
+                if (
+                    ($prev && $prev->type->inline) ||
+                    ($next && $next->type->inline)
+                ) {
+                    continue;
+                }
+
+                $fragment->removeNode($child);
+
+            } else if ($child instanceof Node && $child->content->count()) {
+                $this->normalizeWhitespace($child->content);
+            }
+
         }
 
     }

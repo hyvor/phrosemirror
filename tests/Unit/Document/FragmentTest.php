@@ -18,9 +18,9 @@ test('methods', function() {
     ]);
 
     expect($fragment->first()->isOfType(ParagraphNodeType::class))->toBeTrue();
-    expect($fragment->nth(2)->isOfType(BlockquoteNodeType::class))->toBeTrue();
+    expect($fragment->nth(1)->isOfType(BlockquoteNodeType::class))->toBeTrue();
     expect($fragment->last()->isOfType(BlockquoteNodeType::class))->toBeTrue();
-    expect($fragment->nth(3))->toBeNull();
+    expect($fragment->nth(2))->toBeNull();
 
 });
 
@@ -123,6 +123,6 @@ it('replaces a node', function() {
 
     expect($fragment->count())->toBe(2);
     expect($fragment->first()->isOfType(ParagraphNodeType::class))->toBeTrue();
-    expect($fragment->nth(2)->isOfType(ParagraphNodeType::class))->toBeTrue();
+    expect($fragment->nth(1)->isOfType(ParagraphNodeType::class))->toBeTrue();
 
 });

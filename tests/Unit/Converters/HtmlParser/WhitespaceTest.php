@@ -32,6 +32,51 @@ it('collapses whitespace by default', function() {
 
 });
 
+it('removes unnecessary whitespaces', function() {
+
+    $parser = new HtmlParser(schema(), [
+        new ParserRule(node: 'blockquote', tag: 'blockquote'),
+        new ParserRule(node: 'paragraph', tag: 'p'),
+        new ParserRule(node: 'text', tag: '#text'),
+    ]);
+
+    /**
+     * This normally creates
+     * blockquote
+     *  text " "
+     *  paragraph
+     *     text "Hello World"
+     *  text " "
+     */
+    $document = $parser->parse("<blockquote>
+<p>Hello World</p>
+</blockquote>");
+
+    // but it should remove empty text nodes
+    // around text nodes
+
+    expect($document->toArray())->toBe([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'blockquote',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'content' => [
+                            [
+                                'type' => 'text',
+                                'text' => 'Hello World',
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]);
+
+});
+
 it('normalizes whitespace', function() {
 
     $parser = new HtmlParser(schema(), [

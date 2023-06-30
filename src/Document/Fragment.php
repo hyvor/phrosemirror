@@ -34,17 +34,17 @@ class Fragment implements IteratorAggregate
 
     public function nth(int $n) : ?Node
     {
-        return $this->nodes[$n - 1] ?? null;
+        return $this->nodes[$n] ?? null;
     }
 
     public function first() : ?Node
     {
-        return $this->nth(1);
+        return $this->nth(0);
     }
 
     public function last() : ?Node
     {
-        return $this->nth(count($this->nodes));
+        return $this->nth(count($this->nodes) - 1);
     }
 
     public function count() : int
