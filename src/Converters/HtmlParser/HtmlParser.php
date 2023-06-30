@@ -246,8 +246,8 @@ class HtmlParser
             $children = [$children];
         }
 
-        foreach ($element->childNodes as $child) {
-            $element->removeChild($child);
+        while ($element->hasChildNodes() && $element->firstChild) {
+            $element->removeChild($element->firstChild);
         }
 
         foreach ($children as $child) {
