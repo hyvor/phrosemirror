@@ -30,7 +30,7 @@ class SanitizerFigure extends NodeType
 {
     public string $name = 'figure';
     public string $group = 'block';
-    public ?string $content = 'image';
+    public ?string $content = 'image figcaption?';
 }
 
 class SanitizerImage extends NodeType
@@ -43,6 +43,12 @@ class SanitizerImage extends NodeType
 class SanitizerImageAttrs extends AttrsType
 {
     public ?string $src = null;
+}
+
+class SanitizerFigcaption extends NodeType
+{
+    public string $name = 'figcaption';
+    public ?string $content = 'inline*';
 }
 
 class SanitizerOrderedList extends NodeType
@@ -77,7 +83,8 @@ beforeEach(function() {
                 new SanitizerFigure,
                 new SanitizerOrderedList,
                 new SanitizerListItem,
-                 new SanitizerText()
+                 new SanitizerText(),
+                 new SanitizerFigcaption(),
             ],
             []
         );
@@ -480,6 +487,62 @@ it('promotes children before deleting when possible', function() {
             ],
         ]
     ]));
+
+});
+
+it('promotes children of second child', function() {
+
+    $schema = ($this->getSchema)();
+
+    $doc = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'image',
+                    ],
+                    [
+                        'type' => 'figcaption',
+                        'content' => [
+                            [
+                                'type' => 'paragraph',
+                                'content' => [
+                                    ['type' => 'text', 'text' => 'hello']
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+        ]
+    ]);
+
+    $sanitized = Sanitizer::sanitize($schema, $doc);
+
+    expect($sanitized->toArray())->toBe([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'image',
+                        'attrs' => [
+                            'src' => null
+                        ]
+                    ],
+                    [
+                        'type' => 'figcaption',
+                        'content' => [
+                            ['type' => 'text', 'text' => 'hello']
+                        ]
+                    ]
+                ]
+            ],
+        ]
+    ]);
 
 });
 

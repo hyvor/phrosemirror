@@ -10,6 +10,7 @@ use Hyvor\Phrosemirror\Document\Node;
 use Hyvor\Phrosemirror\Document\TextNode;
 use Hyvor\Phrosemirror\Exception\SanitizerException;
 use Hyvor\Phrosemirror\Types\Schema;
+use Hyvor\Phrosemirror\Util\DeepCopy;
 
 /**
  * Sanitizes a document to make it compliant
@@ -86,6 +87,7 @@ class Sanitizer
             if (!$matched) {
                 if ($fix) {
 
+
                     $currentIndex = $node->content->getIndexOfNode($child);
                     $lastChild = $currentIndex && $currentIndex > 0 ?
                         $node->content->nth($currentIndex) :
@@ -98,10 +100,7 @@ class Sanitizer
                     ) {
                         $node->content->removeNode($child);
                         $removed = true;
-                    }
-                    // try to wrap the node with a valid node
-                    else if ($wrapper = $this->findWrapper($currentStates, $child)) {
-                        $node->content->replaceNode($child, $wrapper);
+                    } else if ($wrapper = $this->tryToWrap($currentStates, $node, $child)) {
 
                         /**
                          * We need to add next states as if we matched
@@ -110,7 +109,10 @@ class Sanitizer
                         $nextStates = [];
                         $this->addNextStateFromCurrentStates($nextStates, $currentStates, $wrapper);
 
-                    } elseif ($this->tryPromoteGrandChildren($node, $child)) {
+                    } elseif (
+                        count($node->content->all()) &&
+                        $this->tryToPromoteGrandChildren($node, $child)
+                    ) {
                         /**
                          * tryPromoteGrandChildren() matches all content after adding grandchildren
                          * So, no need to go to next states
@@ -146,22 +148,22 @@ class Sanitizer
      * We try to promote grand children to $node replacing the $child
      * If this matches, we return true
      */
-    private function tryPromoteGrandChildren(Node $node, Node $child) : bool
+    private function tryToPromoteGrandChildren(Node $node, Node $child) : bool
     {
 
-        $nodeCopy = clone $node;
-        $childCopy = clone $child;
-
-        $fragment = $nodeCopy->content;
-        $nodeChildren = $fragment->all();
-        $index = $fragment->getIndexOfNode($child);
-
+        $index = $node->content->getIndexOfNode($child);
         if ($index === null)
             return false;
 
+        $nodeCopy = DeepCopy::copy($node);
+        $childCopy = DeepCopy::copy($child);
+
+        $fragment = $nodeCopy->content;
+        $nodeChildren = $fragment->all();
+
         $grandChildren = $childCopy->content->all();
 
-        array_splice($nodeChildren, $index + 1, 1, $grandChildren);
+        array_splice($nodeChildren, $index, 1, $grandChildren);
         $fragment->setNodes($nodeChildren);
 
         if ($this->matchChildren($nodeCopy)) {
@@ -193,11 +195,17 @@ class Sanitizer
     }
 
     /**
+     * Tries to wrap the node
+     * only if doing so does not make the content invalid
      * @param NfaState[] $states
-     * @param Node $node
      */
-    private function findWrapper(array $states, Node $node) : ?Node
+    private function tryToWrap(array $states, Node $parent, Node $node) : ?Node
     {
+
+        $index = $parent->content->getIndexOfNode($node);
+
+        if ($index === null)
+            return null;
 
         $possibleNodeTypeNames = [];
 
@@ -237,9 +245,29 @@ class Sanitizer
             if (!$expr)
                 continue;
 
-            if ($this->matchChildren($wrapper))
-                return $wrapper;
+            $parentCopy = DeepCopy::copy($parent);
+            $parentCopy->content->setNodes(
+                array_replace(
+                    $parentCopy->content->all(),
+                    [$index => $wrapper]
+                )
+            );
 
+            /**
+             * If parent's content is valid
+             * parentCopy's content should be valid
+             */
+            if (
+                $this->matchChildren($parent) &&
+                !$this->matchChildren($parentCopy)
+            ) {
+                continue;
+            }
+
+            if ($this->matchChildren($wrapper)) {
+                $parent->content->replaceNode($node, $wrapper);
+                return $wrapper;
+            }
         }
 
         return null;
