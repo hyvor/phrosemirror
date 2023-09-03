@@ -55,7 +55,7 @@ class Doc extends NodeType
 }
 ```
 
-They can contain `content` and `group` properties. If `content` is not set, no content is allowed in this node. See [Content & Grouping](##content--grouping) below for more information on how these properties work.
+They can contain `content` and `group` properties. If `content` is not set, no content is allowed in this node. See [Content & Grouping](#content--grouping) below for more information on how these properties work.
 
 Here is another example of a Node Type:
 
