@@ -19,7 +19,7 @@ composer require hyvor/phrosemirror
 
 This library is unopinionated, which means there is no default schema. To start, you have to start with defining your schema that is similar to your front-end Prosemirror configurations. 
 
-> You can find more an example schema in the `/example` directory in this repo, which is similar to `prosemirror-schema-basic` package's schema.
+> You can find an example schema in the `/example` directory in this repo, which is similar to `prosemirror-schema-basic` package's schema.
 
 ```php
 use Hyvor\Phrosemirror\Types\Schema;
@@ -53,6 +53,19 @@ class Doc extends NodeType
     public string $name = 'doc';
 }
 ```
+
+They can contain `content` and `group` properties (works similar to Prosemirror's schema).
+
+```php
+class Paragraph extends NodeType
+{
+    public string $name = 'paragraph';
+    public ?string $content = 'inline*';
+    public string $group = 'block';
+}
+```
+
+If `content` is not set, no content is allowed in this node. See [Content & Grouping](#content-group) below for more information on how these properties work.
 
 ### Mark Types
 
@@ -375,6 +388,7 @@ $parser = new HtmlParser($schema, [
     new ParserRule(tag: '#text', node: 'text'),
     // ... other rules
 ])
+$doc = $parser->parse($html);
 ```
 
 However, in most cases, you only need one rule set to parse from multiple HTML inputs. Therefore, you can directly define rules in the Schema (in the `fromHtml()` method of Nodes and Marks).
@@ -388,6 +402,8 @@ class Paragraph extends NodeType
 {
 
     public string $name = 'paragraph';
+    public ?string $content = 'inline*';
+    public string $group = 'block';
 
     public function toHtml(Node $node, string $children): string
     {
@@ -405,6 +421,13 @@ class Paragraph extends NodeType
 ```
 
 The `fromHtml()` method should return `ParserRule[]`. Here, the `node` property is not required as it is the same as the Node Type's name.
+
+Then, use the `fromSchema()` method to create the parser.
+
+```php
+$parser = HtmlParser::fromSchema($schema);
+$doc = $parser->parse($html);
+```
 
 ### Parsing HTML Attributes to Node Attributes
 
@@ -441,6 +464,7 @@ The `getAttrs()` callback should return one of the following:
 - `null` if the attributes are not found
 - `AttrsType` if the attributes are found
 
+<!--
 ### Parsing Using Styles
 
 You can also parse HTML elements using their styles instead of the tag.
@@ -448,7 +472,61 @@ You can also parse HTML elements using their styles instead of the tag.
 ```php
 
 ```
+-->
 
+### Content & Grouping {#content-group}
+
+Defining `content` and `group` properties in Node Types is important for parsing HTML. 
+
+For example, let's say we have a `blockquote` node with `content` set to `block+`. This means that the `blockquote` node can only contain block nodes. Therefore, the following HTML does not conform to the schema.
+
+```html
+<blockquote>Hello World</blockquote>
+```
+
+This is when `content` and `group` properties come in handy. Because, we know that the `blockquote` node can only contain block nodes such as paragraphs, the HTML parser will automatically wrap the text in a paragraph when parsing. The resulting HTML would be:
+
+```html
+<blockquote><p>Hello World</p></blockquote>
+```
+
+This logic is handled by `Sanitizer` class. Simply, it does the following to ensure `content` and `group` conformity:
+
+* Tries to wrap nodes
+* Tries to promote children
+* Tries to connect inline nodes
+* If all fails, it will remove the node
+
+`content` expressions support everything the Prosemirror front-end library supports. Here are some examples:
+
+* `paragraph`
+* `paragraph|heading`
+* `paragraph?`
+* `paragraph*`
+* `paragraph+`
+* `paragraph{1,3}`
+* `paragraph{1,}`
+* `paragraph heading` (subsequent nodes)
+* `paragraph (heading | code_block)+`
+* `block+` (using groups)
+
+**Note**: This sanitization process is only run when parsing a document from HTML. It is not run when parsing a document from JSON, because we expect the JSON (usually from your front-end) to be valid. However, you can still run the sanitization process as follows if needed:
+
+```php
+$doc = Document::fromJson($schema, $json);
+$sanitizedDoc = Sanitizer::sanitize($schema, $doc);
+```
+
+### Disabling Sanitization
+
+You can disable `content` sanitization when parsing HTML by setting `sanitize: false`.
+
+```php
+$parser = HtmlParser::fromSchema($schema);
+$doc = $parser->parse($html, sanitize: false);
+```
+
+> ⚠️ **Warning:** Disabling sanitization can result in invalid documents.
 
 ## Error Handling
 
