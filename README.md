@@ -7,12 +7,7 @@ Here is what this library can do:
 * Convert a Document to HTML
 * Convert a Document to Text
 * Parse HTML to a Document
-
-Coming soon:
-
-* `content` and `group` in schema for further validation
-
-> This library is currently in beta. We will go through multiple changes. Do not use in production.
+* `content` and `group` for more strict schema conformity
 
 ## Installation
 
@@ -22,7 +17,9 @@ composer require hyvor/phrosemirror
 
 ## 1. Schema
 
-This library is unopinionated, which means there is no default schema. To start, you have to start with defining your schema that is similar to your front-end Prosemirror configurations.
+This library is unopinionated, which means there is no default schema. To start, you have to start with defining your schema that is similar to your front-end Prosemirror configurations. 
+
+> You can find more an example schema in the `/example` directory in this repo, which is similar to `prosemirror-schema-basic` package's schema.
 
 ```php
 use Hyvor\Phrosemirror\Types\Schema;

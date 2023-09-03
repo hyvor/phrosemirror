@@ -14,6 +14,10 @@ class ParserRule
         public ?string $mark = null,
 
         public ?string $tag = null,
+
+        /**
+         * not supported yet
+         */
         public ?string $style = null,
 
         /**
