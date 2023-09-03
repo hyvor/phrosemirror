@@ -1,9 +1,9 @@
-Phrosemirror is a library to work with Prosemirror (or TipTap) JSON content in PHP in an easy and type-safe way.
+Phrosemirror is a PHP library to work with Prosemirror (or TipTap) JSON content in an easy and type-safe way.
 
 Here is what this library can do:
 
 * Convert Prosemirror JSON into a Document with typed Nodes, Marks, and Attributes
-* Analyze and manipulate Documents
+* Analyze and change Documents
 * Convert a Document to HTML
 * Convert a Document to Text
 * Parse HTML to a Document
@@ -51,10 +51,13 @@ use Hyvor\Phrosemirror\Types\NodeType;
 class Doc extends NodeType
 {
     public string $name = 'doc';
+    public ?string $content = 'block+';
 }
 ```
 
-They can contain `content` and `group` properties (works similar to Prosemirror's schema).
+They can contain `content` and `group` properties. If `content` is not set, no content is allowed in this node. See [Content & Grouping](##content--grouping) below for more information on how these properties work.
+
+Here is another example of a Node Type:
 
 ```php
 class Paragraph extends NodeType
@@ -65,7 +68,6 @@ class Paragraph extends NodeType
 }
 ```
 
-If `content` is not set, no content is allowed in this node. See [Content & Grouping](#content-group) below for more information on how these properties work.
 
 ### Mark Types
 
@@ -98,7 +100,16 @@ class ImageAttrs extends AttrsType
 
 > By defining explicit types, we are sure that `src` attribute of the Image is always a string. `alt` can be a string or null.
 
-Then, in the Node Type, you have to mention the Attrs class.
+You can also define default values for attributes, which will be used if they are not present in the JSON document.
+
+```php
+class ImageAttrs extends AttrsType
+{
+    public string $src = 'https://hyvor.com/placeholder.png';
+}
+```
+
+Then, in the Node Type or Mark Type, you have to mention the Attrs class.
 
 ```php
 use Hyvor\Phrosemirror\Types\NodeType;
@@ -107,15 +118,6 @@ class Image extends NodeType
 {
     // ...
     public string $attrs = ImageAttrs::class;
-}
-```
-
-You can also define default values for attributes, which will be used if they are not present in the JSON document.
-
-```php
-class ImageAttrs extends AttrsType
-{
-    public string $src = 'https://hyvor.com/placeholder.png';
 }
 ```
 
@@ -176,8 +178,6 @@ $node->isOfType(Paragraph::class); // true
 $node->isOfType(Image::class); // false
 $node->isOfType([Paragraph::class, Image::class]); // true
 ```
-
-> Note that, just like `Document::fromJson()`, you can create other nodes from JSON using `Node::fromJson()`. `Document` is an extended `Node` that makes sure the root node is `doc`.
 
 #### Accessing Attributes
 
@@ -474,7 +474,7 @@ You can also parse HTML elements using their styles instead of the tag.
 ```
 -->
 
-### Content & Grouping {#content-group}
+### Content & Grouping
 
 Defining `content` and `group` properties in Node Types is important for parsing HTML. 
 
