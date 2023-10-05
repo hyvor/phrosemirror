@@ -4,6 +4,7 @@ namespace Hyvor\Phrosemirror\Types;
 
 use Hyvor\Phrosemirror\Content\ContentExpression;
 use Hyvor\Phrosemirror\Converters\HtmlParser\ParserRule;
+use Hyvor\Phrosemirror\Converters\HtmlSerializer\Context;
 use Hyvor\Phrosemirror\Document\Node;
 
 
@@ -23,6 +24,11 @@ abstract class NodeType
 
     public bool $inline = false;
 
+    /**
+     * @experimental
+     * This method can be used to get context (current document node)
+     * public function toHtmlFromContext(Context $context) : string
+     */
 
     /**
      * @param Node $node

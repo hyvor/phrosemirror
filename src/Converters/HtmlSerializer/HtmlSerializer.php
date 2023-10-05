@@ -1,5 +1,5 @@
 <?php
-namespace Hyvor\Phrosemirror\Converters;
+namespace Hyvor\Phrosemirror\Converters\HtmlSerializer;
 
 use Hyvor\Phrosemirror\Document\Mark;
 use Hyvor\Phrosemirror\Document\Node;
@@ -8,11 +8,11 @@ use Hyvor\Phrosemirror\Document\TextNode;
 class HtmlSerializer
 {
 
-    public function node(Node $node) : string
+    public function node(Node $node, Node $topNode = null) : string
     {
 
+        $topNode ??= $node;
         $nodeType = $node->type;
-
 
         if ($nodeType->isText() && $node instanceof TextNode) {
             $content = $node->getSafeText();
@@ -21,10 +21,16 @@ class HtmlSerializer
             $childContent = '';
 
             foreach ($node->content->all() as $child) {
-                $childContent .= $this->node($child);
+                $childContent .= $this->node($child, $topNode);
             }
 
-            $content = $nodeType->toHtml($node, $childContent);
+            $content = method_exists($nodeType, 'toHtmlFromContext') ?
+                $nodeType->toHtmlFromContext(new Context(
+                    node: $node,
+                    topNode: $topNode,
+                    children: $childContent)
+                ) :
+                $nodeType->toHtml($node, $childContent);
 
         }
 

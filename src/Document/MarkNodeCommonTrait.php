@@ -2,8 +2,7 @@
 
 namespace Hyvor\Phrosemirror\Document;
 
-use Hyvor\Phrosemirror\Converters\HtmlSerializer;
-use Hyvor\Phrosemirror\Types\AttrsType;
+use Hyvor\Phrosemirror\Converters\HtmlSerializer\HtmlSerializer;
 use Hyvor\Phrosemirror\Types\MarkType;
 use Hyvor\Phrosemirror\Types\NodeType;
 
