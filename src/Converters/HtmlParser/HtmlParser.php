@@ -5,7 +5,7 @@ namespace Hyvor\Phrosemirror\Converters\HtmlParser;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
-use Hyvor\Phrosemirror\Content\Sanitizer;
+use Hyvor\Phrosemirror\Content\Sanitizer\Sanitizer;
 use Hyvor\Phrosemirror\Document\Document;
 use Hyvor\Phrosemirror\Document\Fragment;
 use Hyvor\Phrosemirror\Document\Mark;
