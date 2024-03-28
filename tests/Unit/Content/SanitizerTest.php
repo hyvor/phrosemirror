@@ -580,3 +580,54 @@ it('does not promote children when not possible', function() {
     ]));
 
 });
+
+#bug
+it('promotes inside figure', function() {
+
+    $schema = ($this->getSchema)();
+
+    $doc = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'blockquote',
+                        'content' => [
+                            [
+                                'type' => 'paragraph',
+                                'content' => [
+                                    ['type' => 'text', 'text' => 'hello']
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+        ]
+    ]);
+
+    $sanitized = Sanitizer::sanitize($schema, $doc);
+
+    expect($sanitized->toArray())->toBe([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'figure',
+            ],
+            [
+                'type' => 'blockquote',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'content' => [
+                            ['type' => 'text', 'text' => 'hello']
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]);
+
+});

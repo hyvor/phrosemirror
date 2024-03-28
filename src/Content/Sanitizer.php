@@ -39,21 +39,58 @@ class Sanitizer
         return $this->doc;
     }
 
-    private function sanitizeNode(Node $node) : void
+    /**
+     * @param Node[] $removedAddableNodes
+     */
+    private function sanitizeNode(
+        Node $node,
+        array &$removedAddableNodes = []
+    ) : void
     {
 
         $content = $node->content;
-        $this->matchChildren($node, fix: true);
+        $this->matchChildren(
+            $node,
+            fix: true,
+            removedAddableNodes: $removedAddableNodes
+        );
+
+        $removedNodes = [];
 
         foreach ($content as $child) {
             if ($child->content->count() > 0) {
-                $this->sanitizeNode($child);
+                $this->sanitizeNode($child, $removedNodes);
             }
+        }
+
+        $this->tryAddRemovedNodesToParent($node, $removedNodes);
+
+    }
+
+    /**
+     * @param Node[] $removedNodes
+     */
+    private function tryAddRemovedNodesToParent(Node $parent, array $removedNodes) : void
+    {
+
+        $clone = DeepCopy::copy($parent);
+        foreach ($removedNodes as $removedNode) {
+            $clone->content->addNode($removedNode);
+        }
+        if ($this->matchChildren($clone)) {
+            $parent->content->setNodes($clone->content->all());
         }
 
     }
 
-    public function matchChildren(Node $node, bool $fix = false) : bool
+    /**
+     * @param Node[] $removedAddableNodes
+     */
+    public function matchChildren(
+        Node $node,
+        bool $fix = false,
+        array &$removedAddableNodes = []
+    ) : bool
     {
 
         $expr = ContentExpression::getExpr($node->type->content, $this->schema);
@@ -120,6 +157,7 @@ class Sanitizer
                         return true;
                     } else {
                         // remove the node as the last resort
+                        $removedAddableNodes[] = $child;
                         $node->content->removeNode($child);
                         $removed = true;
                     }
