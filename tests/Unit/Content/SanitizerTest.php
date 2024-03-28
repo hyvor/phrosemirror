@@ -586,52 +586,107 @@ it('does not promote children when not possible', function() {
 });
 
 #bug
-it('promotes inside figure', function() {
+describe('promotes to parent if removed', function() {
 
-    $schema = ($this->getSchema)();
+    it('success', function() {
 
-    $doc = Document::fromJson($schema, [
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'figure',
-                'content' => [
-                    [
-                        'type' => 'blockquote',
-                        'content' => [
-                            [
-                                'type' => 'paragraph',
-                                'content' => [
-                                    ['type' => 'text', 'text' => 'hello']
+        $schema = ($this->getSchema)();
+
+        $doc = Document::fromJson($schema, [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'figure',
+                    'content' => [
+                        [
+                            'type' => 'blockquote',
+                            'content' => [
+                                [
+                                    'type' => 'paragraph',
+                                    'content' => [
+                                        ['type' => 'text', 'text' => 'hello']
+                                    ]
                                 ]
                             ]
                         ]
                     ]
-                ]
-            ],
-        ]
-    ]);
+                ],
+            ]
+        ]);
 
-    $sanitized = Sanitizer::sanitize($schema, $doc);
+        $sanitized = Sanitizer::sanitize($schema, $doc);
 
-    expect($sanitized->toArray())->toBe([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'figure',
-            ],
-            [
-                'type' => 'blockquote',
-                'content' => [
-                    [
-                        'type' => 'paragraph',
-                        'content' => [
-                            ['type' => 'text', 'text' => 'hello']
+        expect($sanitized->toArray())->toBe([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'figure',
+                ],
+                [
+                    'type' => 'blockquote',
+                    'content' => [
+                        [
+                            'type' => 'paragraph',
+                            'content' => [
+                                ['type' => 'text', 'text' => 'hello']
+                            ]
                         ]
                     ]
                 ]
             ]
-        ]
-    ]);
+        ]);
+
+    });
+
+    it('ignores when the parent does not accept it', function() {
+
+        $schema = ($this->getSchema)(new class extends NodeType {
+            public string $name = 'doc';
+            public ?string $content = 'paragraph figure';
+        });
+
+        $doc = Document::fromJson($schema, [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [['type' => 'text', 'text' => 'hello']]
+                ],
+                [
+                    'type' => 'figure',
+                    'content' => [
+                        [
+                            'type' => 'blockquote',
+                            'content' => [
+                                [
+                                    'type' => 'paragraph',
+                                    'content' => [
+                                        ['type' => 'text', 'text' => 'hello']
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+            ]
+        ]);
+
+        $sanitized = Sanitizer::sanitize($schema, $doc);
+
+        expect($sanitized->toArray())->toBe([
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [['type' => 'text', 'text' => 'hello']]
+                ],
+                [
+                    'type' => 'figure',
+                ]
+            ]
+        ]);
+
+    });
 
 });
+
