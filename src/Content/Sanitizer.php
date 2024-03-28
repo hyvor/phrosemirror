@@ -55,28 +55,38 @@ class Sanitizer
             removedAddableNodes: $removedAddableNodes
         );
 
-        $removedNodes = [];
 
-        foreach ($content as $child) {
+        foreach ($content as $index => $child) {
             if ($child->content->count() > 0) {
+                $removedNodes = [];
                 $this->sanitizeNode($child, $removedNodes);
+
+                if (count($removedNodes)) {
+                    $this->tryAddRemovedNodesToParent($node, $index, $removedNodes);
+                }
             }
         }
 
-        $this->tryAddRemovedNodesToParent($node, $removedNodes);
 
     }
 
     /**
      * @param Node[] $removedNodes
      */
-    private function tryAddRemovedNodesToParent(Node $parent, array $removedNodes) : void
+    private function tryAddRemovedNodesToParent(Node $parent, int $insertAfter, array $removedNodes) : void
     {
 
         $clone = DeepCopy::copy($parent);
-        foreach ($removedNodes as $removedNode) {
-            $clone->content->addNode($removedNode);
-        }
+
+        $contentNodes = $clone->content->all();
+        array_splice(
+            $contentNodes,
+            $insertAfter + 1,
+            0,
+            array_reverse($removedNodes)
+        );
+        $clone->content->setNodes($contentNodes);
+
         if ($this->matchChildren($clone)) {
             $parent->content->setNodes($clone->content->all());
         }
