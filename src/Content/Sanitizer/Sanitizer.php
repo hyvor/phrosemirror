@@ -1,7 +1,8 @@
 <?php
 
-namespace Hyvor\Phrosemirror\Content;
+namespace Hyvor\Phrosemirror\Content\Sanitizer;
 
+use Hyvor\Phrosemirror\Content\ContentExpression;
 use Hyvor\Phrosemirror\Content\Nfa\Nfa;
 use Hyvor\Phrosemirror\Content\Nfa\NfaState;
 use Hyvor\Phrosemirror\Document\Document;
@@ -40,11 +41,12 @@ class Sanitizer
     }
 
     /**
-     * @param Node[] $removedAddableNodes
+     * @param RemovedNode[] $removedAddableNodes
      */
     private function sanitizeNode(
         Node $node,
-        array &$removedAddableNodes = []
+        ?int $parentIndex = null,
+        array &$removedAddableNodes = [],
     ) : void
     {
 
@@ -52,40 +54,60 @@ class Sanitizer
         $this->matchChildren(
             $node,
             fix: true,
+            parentIndex: $parentIndex,
             removedAddableNodes: $removedAddableNodes
         );
 
+        $removedNodes = [];
 
         foreach ($content as $index => $child) {
             if ($child->content->count() > 0) {
-                $removedNodes = [];
-                $this->sanitizeNode($child, $removedNodes);
-
-                if (count($removedNodes)) {
-                    $this->tryAddRemovedNodesToParent($node, $index, $removedNodes);
-                }
+                $this->sanitizeNode(
+                    $child,
+                    parentIndex: $index,
+                    removedAddableNodes: $removedNodes,
+                );
             }
         }
 
+        $this->tryAddRemovedNodesToParent($node, $removedNodes);
 
     }
 
     /**
-     * @param Node[] $removedNodes
+     * @param RemovedNode[] $removedNodes
      */
-    private function tryAddRemovedNodesToParent(Node $parent, int $insertAfter, array $removedNodes) : void
+    private function tryAddRemovedNodesToParent(Node $parent, array $removedNodes) : void
     {
+        if (count($removedNodes) === 0) {
+            return;
+        }
 
         $clone = DeepCopy::copy($parent);
-
         $contentNodes = $clone->content->all();
-        array_splice(
-            $contentNodes,
-            $insertAfter + 1,
-            0,
-            array_reverse($removedNodes)
-        );
-        $clone->content->setNodes($contentNodes);
+
+        /** @var array<int, Node[]> $removedByIndexes */
+        $removedByIndexes = [];
+
+        foreach ($removedNodes as $removedNode) {
+            $removedByIndexes[$removedNode->parentIndex][] = $removedNode->node;
+        }
+
+        $allChildren = [];
+
+        $previousIndex = 0;
+        foreach ($removedByIndexes as $index => $removedNodes) {
+            $childrenLeft = array_slice($contentNodes, $previousIndex, 1 + $index - $previousIndex);
+
+            $allChildren = array_merge($allChildren, $childrenLeft);
+            $allChildren = array_merge($allChildren, $removedNodes);
+
+            $previousIndex = $index + 1;
+        }
+
+        $allChildren = array_merge($allChildren, array_slice($contentNodes, $previousIndex));
+
+        $clone->content->setNodes($allChildren);
 
         if ($this->matchChildren($clone)) {
             $parent->content->setNodes($clone->content->all());
@@ -94,11 +116,12 @@ class Sanitizer
     }
 
     /**
-     * @param Node[] $removedAddableNodes
+     * @param RemovedNode[] $removedAddableNodes
      */
     public function matchChildren(
         Node $node,
         bool $fix = false,
+        ?int $parentIndex = null,
         array &$removedAddableNodes = []
     ) : bool
     {
@@ -134,7 +157,6 @@ class Sanitizer
             if (!$matched) {
                 if ($fix) {
 
-
                     $currentIndex = $node->content->getIndexOfNode($child);
                     $lastChild = $currentIndex && $currentIndex > 0 ?
                         $node->content->nth($currentIndex - 1) :
@@ -167,7 +189,13 @@ class Sanitizer
                         return true;
                     } else {
                         // remove the node as the last resort
-                        $removedAddableNodes[] = $child;
+
+                        if ($parentIndex !== null) {
+                            $removedAddableNodes[] = new RemovedNode(
+                                $child,
+                                $parentIndex
+                            );
+                        }
                         $node->content->removeNode($child);
                         $removed = true;
                     }

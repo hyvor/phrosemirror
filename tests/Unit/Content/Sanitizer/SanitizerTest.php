@@ -1,101 +1,16 @@
 <?php
 namespace Hyvor\Phrosemirror\Test\Unit\Content;
 
-use Hyvor\Phrosemirror\Content\Sanitizer;
+use Hyvor\Phrosemirror\Content\Sanitizer\Sanitizer;
 use Hyvor\Phrosemirror\Document\Document;
-use Hyvor\Phrosemirror\Types\AttrsType;
+use Hyvor\Phrosemirror\Test\Unit\Content\Sanitizer\SanitizerHelper;
 use Hyvor\Phrosemirror\Types\NodeType;
-use Hyvor\Phrosemirror\Types\Schema;
-
-class SanitizerDoc extends NodeType
-{
-    public string $name = 'doc';
-    public ?string $content = 'block+';
-}
-
-class SanitizerParagraph extends NodeType
-{
-    public string $name = 'paragraph';
-    public string $group = 'block';
-    public ?string $content = 'inline*';
-}
-
-class SanitizerBlockquote extends NodeType
-{
-    public string $name = 'blockquote';
-    public string $group = 'block';
-}
-
-class SanitizerFigure extends NodeType
-{
-    public string $name = 'figure';
-    public string $group = 'block';
-    public ?string $content = 'image figcaption?';
-}
-
-class SanitizerImage extends NodeType
-{
-    public string $name = 'image';
-    public string $group = 'figure_elements';
-
-    public string $attrs = SanitizerImageAttrs::class;
-}
-class SanitizerImageAttrs extends AttrsType
-{
-    public ?string $src = null;
-}
-
-class SanitizerFigcaption extends NodeType
-{
-    public string $name = 'figcaption';
-    public ?string $content = 'inline*';
-}
-
-class SanitizerOrderedList extends NodeType
-{
-    public string $name = 'ordered_list';
-    public string $group = 'block';
-    public ?string $content = 'list_item+';
-}
-
-class SanitizerListItem extends NodeType
-{
-    public string $name = 'list_item';
-    public string $group = 'block';
-    public ?string $content = 'paragraph block*';
-}
-
-class SanitizerText extends NodeType
-{
-    public string $name = 'text';
-    public string $group = 'inline';
-    public bool $inline = true;
-}
-
-beforeEach(function() {
-    $this->getSchema = function($doc = null) {
-        return new Schema(
-             [
-                $doc ?? new SanitizerDoc,
-                new SanitizerParagraph,
-                new SanitizerBlockquote,
-                new SanitizerImage,
-                new SanitizerFigure,
-                new SanitizerOrderedList,
-                new SanitizerListItem,
-                 new SanitizerText(),
-                 new SanitizerFigcaption(),
-            ],
-            []
-        );
-    };
-});
 
 it('wraps text in list nodes around paragraphs', function() {
 
-    $schema = ($this->getSchema)();
+    $schema = SanitizerHelper::getSchema();
 
-    $doc = Document::fromJson(($this->getSchema)(), [
+    $doc = Document::fromJson(SanitizerHelper::getSchema(), [
         'type' => 'doc',
         'content' => [
             [
@@ -146,9 +61,9 @@ it('wraps text in list nodes around paragraphs', function() {
 
 it('wraps images in figures', function() {
 
-    $schema = ($this->getSchema)();
+    $schema = SanitizerHelper::getSchema();
 
-    $doc = Document::fromJson(($this->getSchema)(), [
+    $doc = Document::fromJson(SanitizerHelper::getSchema(), [
         'type' => 'doc',
         'content' => [
             [
@@ -183,9 +98,9 @@ it('wraps images in figures', function() {
 
 it('connects inline elements to previous', function() {
 
-    $schema = ($this->getSchema)();
+    $schema = SanitizerHelper::getSchema();
 
-    $doc = Document::fromJson(($this->getSchema)(), [
+    $doc = Document::fromJson(SanitizerHelper::getSchema(), [
         'type' => 'doc',
         'content' => [
             [
@@ -229,9 +144,9 @@ it('connects inline elements to previous', function() {
 
 it('wraps text in list nodes in paragraphs and connects texts', function() {
 
-    $schema = ($this->getSchema)();
+    $schema = SanitizerHelper::getSchema();
 
-    $doc = Document::fromJson(($this->getSchema)(), [
+    $doc = Document::fromJson(SanitizerHelper::getSchema(), [
         'type' => 'doc',
         'content' => [
             [
@@ -291,9 +206,9 @@ it('wraps text in list nodes in paragraphs and connects texts', function() {
 
 it('removes invalid elements when cannot be wrapped', function() {
 
-    $schema = ($this->getSchema)();
+    $schema = SanitizerHelper::getSchema();
 
-    $doc = Document::fromJson(($this->getSchema)(), [
+    $doc = Document::fromJson(SanitizerHelper::getSchema(), [
         'type' => 'doc',
         'content' => [
             [
@@ -322,7 +237,7 @@ it('removes invalid elements when cannot be wrapped', function() {
 
 it('works with range expr', function() {
 
-    $schema = ($this->getSchema)(new class extends NodeType {
+    $schema = SanitizerHelper::getSchema(new class extends NodeType {
         public string $name = 'doc';
         public ?string $content = 'paragraph paragraph{1,2}';
     });
@@ -352,7 +267,7 @@ it('works with range expr', function() {
 
 it('works with range expr without ending', function() {
 
-    $schema = ($this->getSchema)(new class extends NodeType {
+    $schema = SanitizerHelper::getSchema(new class extends NodeType {
         public string $name = 'doc';
         public ?string $content = 'paragraph paragraph{1,}';
     });
@@ -391,7 +306,7 @@ it('works with range expr without ending', function() {
 
 it('works with optional expr', function() {
 
-    $schema = ($this->getSchema)(new class extends NodeType {
+    $schema = SanitizerHelper::getSchema(new class extends NodeType {
         public string $name = 'doc';
         public ?string $content = 'paragraph paragraph?';
     });
@@ -428,7 +343,7 @@ it('works with optional expr', function() {
 
 it('empties children when content is not set', function() {
 
-    $schema = ($this->getSchema)(new class extends NodeType {
+    $schema = SanitizerHelper::getSchema(new class extends NodeType {
         public string $name = 'doc';
     });
 
@@ -452,7 +367,7 @@ it('empties children when content is not set', function() {
 
 it('promotes children before deleting when possible', function() {
 
-    $schema = ($this->getSchema)(new class extends NodeType {
+    $schema = SanitizerHelper::getSchema(new class extends NodeType {
         public string $name = 'doc';
         public ?string $content = 'paragraph paragraph?';
     });
@@ -492,7 +407,7 @@ it('promotes children before deleting when possible', function() {
 
 it('promotes children of second child', function() {
 
-    $schema = ($this->getSchema)();
+    $schema = SanitizerHelper::getSchema();
 
     $doc = Document::fromJson($schema, [
         'type' => 'doc',
@@ -548,7 +463,7 @@ it('promotes children of second child', function() {
 
 it('does not promote children when not possible', function() {
 
-    $schema = ($this->getSchema)(new class extends NodeType {
+    $schema = SanitizerHelper::getSchema(new class extends NodeType {
         public string $name = 'doc';
         public ?string $content = 'paragraph paragraph?';
     });
@@ -582,169 +497,5 @@ it('does not promote children when not possible', function() {
             ]
         ]
     ]));
-
-});
-
-it('success', function() {
-
-    $schema = ($this->getSchema)();
-
-    $doc = Document::fromJson($schema, [
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'figure',
-                'content' => [
-                    [
-                        'type' => 'blockquote',
-                        'content' => [
-                            [
-                                'type' => 'paragraph',
-                                'content' => [
-                                    ['type' => 'text', 'text' => 'hello']
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-        ]
-    ]);
-
-    $sanitized = Sanitizer::sanitize($schema, $doc);
-
-    expect($sanitized->toArray())->toBe([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'figure',
-            ],
-            [
-                'type' => 'blockquote',
-                'content' => [
-                    [
-                        'type' => 'paragraph',
-                        'content' => [
-                            ['type' => 'text', 'text' => 'hello']
-                        ]
-                    ]
-                ]
-            ]
-        ]
-    ]);
-
-});
-
-
-it('ignores when the parent does not accept it', function() {
-
-    $schema = ($this->getSchema)(new class extends NodeType {
-        public string $name = 'doc';
-        public ?string $content = 'paragraph figure';
-    });
-
-    $doc = Document::fromJson($schema, [
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [['type' => 'text', 'text' => 'hello']]
-            ],
-            [
-                'type' => 'figure',
-                'content' => [
-                    [
-                        'type' => 'blockquote',
-                        'content' => [
-                            [
-                                'type' => 'paragraph',
-                                'content' => [
-                                    ['type' => 'text', 'text' => 'hello']
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-        ]
-    ]);
-
-    $sanitized = Sanitizer::sanitize($schema, $doc);
-
-    expect($sanitized->toArray())->toBe([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'paragraph',
-                'content' => [['type' => 'text', 'text' => 'hello']]
-            ],
-            [
-                'type' => 'figure',
-            ]
-        ]
-    ]);
-
-});
-
-
-it('promotes to parent if removed - when there are other elements after', function() {
-
-    $schema = ($this->getSchema)();
-
-    $doc = Document::fromJson($schema, [
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'figure',
-                'content' => [
-                    [
-                        'type' => 'blockquote',
-                        'content' => [
-                            [
-                                'type' => 'paragraph',
-                                'content' => [
-                                    ['type' => 'text', 'text' => 'hello']
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    ['type' => 'text', 'text' => 'world']
-                ]
-            ]
-        ]
-    ]);
-
-    $sanitized = Sanitizer::sanitize($schema, $doc);
-
-    expect($sanitized->toArray())->toBe([
-        'type' => 'doc',
-        'content' => [
-            [
-                'type' => 'figure',
-            ],
-            [
-                'type' => 'blockquote',
-                'content' => [
-                    [
-                        'type' => 'paragraph',
-                        'content' => [
-                            ['type' => 'text', 'text' => 'hello']
-                        ]
-                    ]
-                ]
-            ],
-            [
-                'type' => 'paragraph',
-                'content' => [
-                    ['type' => 'text', 'text' => 'world']
-                ]
-            ]
-        ]
-    ]);
 
 });
