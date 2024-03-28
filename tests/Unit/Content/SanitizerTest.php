@@ -576,6 +576,10 @@ it('does not promote children when not possible', function() {
             [
                 'type' => 'paragraph',
             ],
+            // since #28, this is promoted
+            [
+                'type' => 'paragraph',
+            ]
         ]
     ]));
 
