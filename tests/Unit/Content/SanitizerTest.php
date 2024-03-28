@@ -585,108 +585,166 @@ it('does not promote children when not possible', function() {
 
 });
 
-#bug
-describe('promotes to parent if removed', function() {
+it('success', function() {
 
-    it('success', function() {
+    $schema = ($this->getSchema)();
 
-        $schema = ($this->getSchema)();
-
-        $doc = Document::fromJson($schema, [
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'figure',
-                    'content' => [
-                        [
-                            'type' => 'blockquote',
-                            'content' => [
-                                [
-                                    'type' => 'paragraph',
-                                    'content' => [
-                                        ['type' => 'text', 'text' => 'hello']
-                                    ]
+    $doc = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'blockquote',
+                        'content' => [
+                            [
+                                'type' => 'paragraph',
+                                'content' => [
+                                    ['type' => 'text', 'text' => 'hello']
                                 ]
                             ]
                         ]
                     ]
-                ],
-            ]
-        ]);
+                ]
+            ],
+        ]
+    ]);
 
-        $sanitized = Sanitizer::sanitize($schema, $doc);
+    $sanitized = Sanitizer::sanitize($schema, $doc);
 
-        expect($sanitized->toArray())->toBe([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'figure',
-                ],
-                [
-                    'type' => 'blockquote',
-                    'content' => [
-                        [
-                            'type' => 'paragraph',
-                            'content' => [
-                                ['type' => 'text', 'text' => 'hello']
-                            ]
+    expect($sanitized->toArray())->toBe([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'figure',
+            ],
+            [
+                'type' => 'blockquote',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'content' => [
+                            ['type' => 'text', 'text' => 'hello']
                         ]
                     ]
                 ]
             ]
-        ]);
-
-    });
-
-    it('ignores when the parent does not accept it', function() {
-
-        $schema = ($this->getSchema)(new class extends NodeType {
-            public string $name = 'doc';
-            public ?string $content = 'paragraph figure';
-        });
-
-        $doc = Document::fromJson($schema, [
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'paragraph',
-                    'content' => [['type' => 'text', 'text' => 'hello']]
-                ],
-                [
-                    'type' => 'figure',
-                    'content' => [
-                        [
-                            'type' => 'blockquote',
-                            'content' => [
-                                [
-                                    'type' => 'paragraph',
-                                    'content' => [
-                                        ['type' => 'text', 'text' => 'hello']
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-            ]
-        ]);
-
-        $sanitized = Sanitizer::sanitize($schema, $doc);
-
-        expect($sanitized->toArray())->toBe([
-            'type' => 'doc',
-            'content' => [
-                [
-                    'type' => 'paragraph',
-                    'content' => [['type' => 'text', 'text' => 'hello']]
-                ],
-                [
-                    'type' => 'figure',
-                ]
-            ]
-        ]);
-
-    });
+        ]
+    ]);
 
 });
 
+
+it('ignores when the parent does not accept it', function() {
+
+    $schema = ($this->getSchema)(new class extends NodeType {
+        public string $name = 'doc';
+        public ?string $content = 'paragraph figure';
+    });
+
+    $doc = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [['type' => 'text', 'text' => 'hello']]
+            ],
+            [
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'blockquote',
+                        'content' => [
+                            [
+                                'type' => 'paragraph',
+                                'content' => [
+                                    ['type' => 'text', 'text' => 'hello']
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+        ]
+    ]);
+
+    $sanitized = Sanitizer::sanitize($schema, $doc);
+
+    expect($sanitized->toArray())->toBe([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [['type' => 'text', 'text' => 'hello']]
+            ],
+            [
+                'type' => 'figure',
+            ]
+        ]
+    ]);
+
+});
+
+
+it('promotes to parent if removed - when there are other elements after', function() {
+
+    $schema = ($this->getSchema)();
+
+    $doc = Document::fromJson($schema, [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'figure',
+                'content' => [
+                    [
+                        'type' => 'blockquote',
+                        'content' => [
+                            [
+                                'type' => 'paragraph',
+                                'content' => [
+                                    ['type' => 'text', 'text' => 'hello']
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'text', 'text' => 'world']
+                ]
+            ]
+        ]
+    ]);
+
+    $sanitized = Sanitizer::sanitize($schema, $doc);
+
+    expect($sanitized->toArray())->toBe([
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'figure',
+            ],
+            [
+                'type' => 'blockquote',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'content' => [
+                            ['type' => 'text', 'text' => 'hello']
+                        ]
+                    ]
+                ]
+            ],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'text', 'text' => 'world']
+                ]
+            ]
+        ]
+    ]);
+
+});
