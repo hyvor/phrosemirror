@@ -8,7 +8,7 @@ use Hyvor\Phrosemirror\Document\TextNode;
 class HtmlSerializer
 {
 
-    public function node(Node $node, Node $topNode = null) : string
+    public function node(Node $node, ?Node $topNode = null) : string
     {
 
         $topNode ??= $node;
